@@ -1,4 +1,4 @@
-from strategy import tests
+from strategy import BaseStrategy
 from strategy import larc2020
 from strategy import larc2021
 from strategy import iron2023_3v3

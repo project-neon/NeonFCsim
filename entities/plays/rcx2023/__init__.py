@@ -1,1 +1,1 @@
-from mainplay import MainPlay
+from entities.plays.rcx2023.mainplay import MainPlay

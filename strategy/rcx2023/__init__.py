@@ -1,0 +1,1 @@
+from strategy.rcx2023.rcx2023_attacker import MainAttacker

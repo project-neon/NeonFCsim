@@ -6,6 +6,7 @@ from strategy.utils.player_playbook import PlayerPlay, PlayerPlaybook
 class PredictBot(PlayerPlay):
     def __init__(self, match, robot):
         super().__init__(match, robot)
+        self.robot = robot
     def get_name(self):
         return f"<{self.robot.get_name()} PredictBot>"
     def start_up(self):
@@ -34,6 +35,7 @@ class MainAttacker(Strategy):
     def start(self, robot=None):
         super().start(robot=robot)
         self.playerbook = PlayerPlaybook(self.match.coach, self.robot)
+
         pred = PredictBot(self.match, self.robot)
         pred.start()
         self.playerbook.add_play(pred)

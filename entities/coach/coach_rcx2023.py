@@ -10,11 +10,12 @@ class Coach(BaseCoach): # heranca da classe abstrata
         # vamos usar strategies de teste por enquanto, essa deixa o robo parado
         self.coach_parameters = coach_parameters
         self.playbook = plays.Playbook(self)
-        main_play = plays.rcx2023.MainPlay
+        main_play = plays.rcx2023.MainPlay(self)
 
         
 
         self.playbook.add_play(main_play)
         self.playbook.set_play(main_play)
-    def decide(self):
-        return
+    def decide (self):
+        
+        self.playbook.update()

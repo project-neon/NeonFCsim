@@ -9,8 +9,8 @@ class MainPlay(Play):
         self.match = self.coach.match
         self.coach = coach
         self.strategies = [
-            strategy.rcx2023.MainAttacker(self.match, 'GoalKeeper'),
-            strategy.rcx2023.MainAttacker(self.match, 'Midfielder'),
+            strategy.Strategy(self.match, 'GoalKeeper'),
+            strategy.Strategy(self.match, 'Midfielder'),
             strategy.rcx2023.MainAttacker(self.match, 'MainAttacker'),
         ]
 
@@ -24,38 +24,5 @@ class MainPlay(Play):
     def update(self):
         super().update()
         
-        attackers = self.match.robots[-2:]
-        best_attacker = None
-        best_fit = -9999
-        for attacker_candidate in attackers:
-            fit = self._elect_leftattacker(attacker_candidate)
-            if fit > best_fit:
-                best_attacker = attacker_candidate.robot_id
-                best_fit = fit
-        
-        if best_attacker == 1:
-            strategies = self.strategies[0:1] + [self.strategies[2], self.strategies[1]]
-        else:
-            strategies = self.strategies
-
-
-        for robot, strategy in zip(self.match.robots, strategies):
-            if robot.strategy is None:
-                robot.strategy = strategy
-                robot.start()
-            elif robot.strategy.name != strategy.name:
-                robot.strategy = strategy
-                robot.start()
-
-
-            
-    def _elect_leftattacker(self, robot):
-        is_behind = 4 if robot.x > self.match.ball.x else 1
-        dist_to_ball = math.sqrt(
-            (robot.x - self.match.ball.x)**2 + (robot.y - self.match.ball.y)**2
-        )
-        is_1 = 0
-        #if robot.robot_id == 2:
-        #    is_1 = 10000
-
-        return  1000 - dist_to_ball*is_behind
+        for i in self.match.robots:
+            i.strategy = self.strategies[i.robot_id]

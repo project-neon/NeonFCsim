@@ -10,14 +10,17 @@ def angle_adjustment(angle):
         return phi
 
 class PID_control_2(object):
-    def __init__(self, robot, default_fps=60,tf=True, max_speed=1.8, max_angular=2400,KB=0, krho=100, kp=60, ki=0, kd=0, reduce_speed=False):
+    def __init__(self, robot, default_fps=60,tf=True, max_speed=1.8,smooth_w=0, max_angular=2400,KB=0, krho=100, kp=60, ki=0, kd=0, reduce_speed=False):
         self.vision = robot.game.vision
         self.field_w, self.field_h = robot.game.field.get_dimensions()
         self.robot = robot
         self.desired = [0, 0]
         self.desire_angle = 0
+        self.max_angular = max_angular
         self.two_face = tf
-
+        self.smooth_w = smooth_w
+        self.w = 0
+        self.V = 0
         self.ball = self.robot.strategy.match.ball
 
         self.reduce_speed = reduce_speed
@@ -45,7 +48,7 @@ class PID_control_2(object):
         # Max speeds for the robot
         self.v_max = max_speed # linear speed 
         self.w_max = math.radians(max_angular) # angular speed rad/s
-    
+        self.w_speed = 0
     def set_desired(self, vector):
         self.desired = vector
     def set_angle(self, a):
@@ -59,6 +62,7 @@ class PID_control_2(object):
     def update(self):
         # Params calculation
         # Feedback errors
+        
         D_x =  self.desired[0] - self.robot.x
         D_y =  self.desired[1] - self.robot.y
 
@@ -87,23 +91,30 @@ class PID_control_2(object):
             v = self.v_max
         
         # """Objective behind the robot"""
-        delta = 0.4
-        if self.two_face and(abs(alpha) > math.pi/2 + delta):
-            v = -v
+        dt = 0.05
+        if self.two_face and(abs(alpha) > math.pi/2):
+            
+            self.V -= np.sign(v)*dt
+            print(alpha)
+            beta = angle_adjustment(self.desire_angle - math.pi - gamma)
             alpha = angle_adjustment(alpha - math.pi)
-        
-        #if(abs(beta) > math.pi/2):
-         #   beta = angle_adjustment(beta - math.pi)
+        else:
+            self.V += np.sign(v)*dt
+            beta = angle_adjustment(self.desire_angle - gamma)
+        self.V = np.sign(self.V)*min(self.v_max, abs(self.V))
+        print(self.V)
+
+        self.w_max = math.radians(self.max_angular - self.smooth_w*(self.robot.vx**2 + self.robot.vy**2)**(1/2))
 
         """Angular speed (w)"""
-        w = self.KP * alpha + self.KB * beta + self.KI * self.int_alpha + self.KD * self.dif_alpha
-        w = np.sign(w) * min(abs(w), self.w_max)
+        self.w = self.KP * alpha + self.KB * beta + self.KI * self.int_alpha + self.KD * self.dif_alpha
+        self.w = np.sign(self.w) * min(abs(self.w), self.w_max)
         
         self.alpha_old = alpha
 
         """Wheel power calculation"""
-        pwr_left = (2 * v - w * self.l)/2 * self.R
-        pwr_right = (2 * v + w * self.l)/2 * self.R
+        pwr_left = (2 * self.V - self.w * self.l)/2 * self.R
+        pwr_right = (2 * self.V + self.w * self.l)/2 * self.R
 
         return pwr_left * 1000, pwr_right * 1000
 

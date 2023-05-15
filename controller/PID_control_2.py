@@ -92,17 +92,15 @@ class PID_control_2(object):
         
         # """Objective behind the robot"""
         dt = 0.05
-        if self.two_face and(abs(alpha) > math.pi/2):
+        if self.two_face and(abs(alpha) > math.pi/2-0.3):
             
             self.V -= np.sign(v)*dt
-            print(alpha)
             beta = angle_adjustment(self.desire_angle - math.pi - gamma)
             alpha = angle_adjustment(alpha - math.pi)
         else:
             self.V += np.sign(v)*dt
             beta = angle_adjustment(self.desire_angle - gamma)
         self.V = np.sign(self.V)*min(self.v_max, abs(self.V))
-        print(self.V)
 
         self.w_max = math.radians(self.max_angular - self.smooth_w*(self.robot.vx**2 + self.robot.vy**2)**(1/2))
 

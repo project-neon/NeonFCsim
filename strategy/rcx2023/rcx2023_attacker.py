@@ -23,6 +23,17 @@ class PredictBot(PlayerPlay):
     def start(self):
         pass
     def update(self):
+        def ajust_pred(pos):
+            new_pred = pos
+            if pos[1] > 1.3 :
+                new_pred[1] = 1.3 - abs(1.3-pos[1])/2
+            elif pos[1] < 0 :
+                new_pred[1] = -pos[1]/2
+            if pos[0] > 1.5 :
+                new_pred[0] = 1.5 - abs(1.5-pos[0])/2
+            elif pos[0] < 0 :
+                new_pred[0] = -pos[0]/2
+            return new_pred
         res = [0,0]
         
         if ((self.robot.x - self.match.ball.x)**2 + (self.robot.y - self.match.ball.y)**2)**(1/2) < 0.1:
@@ -44,10 +55,10 @@ class PredictBot(PlayerPlay):
             res[0] = self.match.ball.x + self.match.ball.vx*d/max(v,0.1)*k
             res[1] = self.match.ball.y + self.match.ball.vy*d/max(v,0.1)*k
             print(res)
-        #thetha = np.arctan2((-self.match.ball.y + 0.65),(self.match.ball.x))
-        thetha = np.pi
+        thetha = np.arctan2((-self.match.ball.y + 0.65),(self.match.ball.x))
+        #thetha = np.pi
         self.robot.strategy.controller.set_angle(thetha)
-        return res
+        return ajust_pred(res)
 
 
 class MainAttacker(Strategy):

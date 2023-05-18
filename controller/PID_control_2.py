@@ -22,7 +22,7 @@ class PID_control_2(object):
         self.w = 0
         self.V = 0
         self.ball = self.robot.strategy.match.ball
-
+        self.right = True
         self.reduce_speed = reduce_speed
 
         self.l = self.robot.dimensions.get('L')/2 # half_distance_between_robot_wheels
@@ -91,15 +91,24 @@ class PID_control_2(object):
             v = self.v_max
         
         # """Objective behind the robot"""
-        dt = 0.05
-        if self.two_face and(abs(alpha) > math.pi/2-0.3):
-            
+        dt = 1
+        if self.two_face and(abs(alpha) > 2*math.pi/3):
+            self.right = True
+        elif self.two_face and(abs(alpha) < math.pi/3):
+            self.right = False
+
+
+        if self.right:
             self.V -= np.sign(v)*dt
             beta = angle_adjustment(self.desire_angle - math.pi - gamma)
             alpha = angle_adjustment(alpha - math.pi)
-        else:
+        if not self.right:
             self.V += np.sign(v)*dt
             beta = angle_adjustment(self.desire_angle - gamma)
+
+        
+
+
         self.V = np.sign(self.V)*min(self.v_max, abs(self.V))
 
         self.w_max = math.radians(self.max_angular - self.smooth_w*(self.robot.vx**2 + self.robot.vy**2)**(1/2))

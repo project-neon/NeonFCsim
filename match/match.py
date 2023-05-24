@@ -2,7 +2,7 @@ import os
 import time
 import entities
 from api import Api
-
+import matplotlib.pyplot as plt
 from concurrent import futures
 
 CATEGORIES = {
@@ -25,7 +25,7 @@ class Match(object):
         self.opposite_team_color = 'yellow' if self.team_color == 'blue' else 'blue'
 
         self.game_status = 'stop'
-
+        self.t = 0
     
     def start(self):
         print("Starting match module starting ...")
@@ -45,6 +45,10 @@ class Match(object):
 
         for robot in self.robots:
             robot.start()
+    def plot(self,x,y):
+        plt.plot(x,y)
+        plt.show()
+
 
     def restart(self, team_color):
         self.team_color = team_color
@@ -63,9 +67,15 @@ class Match(object):
         for robot in self.robots:
             robot.start()
 
-
     def update(self, frame):
         self.ball.update(frame)
+        self.t += 1
+        if self.t % 100 and self.t > 200:
+            for i in self.robots:
+                #print(i.get_name())
+                if i.get_name() == "ROBOT_2_blue" :
+                    self.plot(i.strategy.playerbook.get_actual_play().pathplanning.plot()[0],i.strategy.playerbook.get_actual_play().pathplanning.plot()[1])
+                    break
 
         for entity in self.opposites:
             entity.update(frame)

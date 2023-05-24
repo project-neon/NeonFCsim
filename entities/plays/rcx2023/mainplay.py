@@ -10,7 +10,7 @@ class MainPlay(Play):
         self.coach = coach
         self.strategies = [
             strategy.Strategy(self.match, 'GoalKeeper'),
-            strategy.Strategy(self.match, 'Midfielder'),
+            strategy.rcx2023.MainMidFielder(self.match, 'MainMidfielder'),
             strategy.rcx2023.MainAttacker(self.match, 'MainAttacker'),
         ]
 
@@ -25,4 +25,5 @@ class MainPlay(Play):
         super().update()
         
         for i in self.match.robots:
-            i.strategy = self.strategies[i.robot_id]
+            if i.strategy is None:
+                i.strategy = self.strategies[i.robot_id]

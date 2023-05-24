@@ -44,7 +44,7 @@ class PID_control_2(object):
         self.dif_alpha = 0 # diferential param
         self.int_alpha = 0 # integral param
         self.alpha_old = 0 # stores previous iteration alpha
-    
+        self.alpha = 0
         # Max speeds for the robot
         self.v_max = max_speed # linear speed 
         self.w_max = math.radians(max_angular) # angular speed rad/s
@@ -71,17 +71,17 @@ class PID_control_2(object):
 
         # GAMMA robot's position angle to the objetive
         gamma = angle_adjustment(math.atan2(D_y, D_x))
-
+        
         # ALPHA angle between the front of the robot and the objective
-        alpha = angle_adjustment(gamma - self.robot.theta)
+        self.alpha = angle_adjustment(gamma - self.robot.theta)
 
         # BETA
         beta = angle_adjustment(self.desire_angle - gamma)
 
         """Calculate the parameters of PID control"""
         self._update_fps()
-        self.dif_alpha = alpha - self.alpha_old / self.dt # Difentential of alpha
-        self.int_alpha = self.int_alpha + alpha
+        self.dif_alpha = self.alpha - self.alpha_old / self.dt # Difentential of alpha
+        self.int_alpha = self.int_alpha + self.alpha
 
         """Linear speed (v)"""
         if self.reduce_speed:
@@ -92,16 +92,16 @@ class PID_control_2(object):
         
         # """Objective behind the robot"""
         dt = 1
-        if self.two_face and(abs(alpha) > 2*math.pi/3):
+        if self.two_face and(abs(self.alpha) > 2*math.pi/3):
             self.right = True
-        elif self.two_face and(abs(alpha) < math.pi/3):
+        elif self.two_face and(abs(self.alpha) < math.pi/3):
             self.right = False
 
 
         if self.right:
             self.V -= np.sign(v)*dt
             beta = angle_adjustment(self.desire_angle - math.pi - gamma)
-            alpha = angle_adjustment(alpha - math.pi)
+            self.alpha = angle_adjustment(self.alpha - math.pi)
         if not self.right:
             self.V += np.sign(v)*dt
             beta = angle_adjustment(self.desire_angle - gamma)
@@ -114,10 +114,10 @@ class PID_control_2(object):
         self.w_max = math.radians(self.max_angular - self.smooth_w*(self.robot.vx**2 + self.robot.vy**2)**(1/2))
 
         """Angular speed (w)"""
-        self.w = self.KP * alpha + self.KB * beta + self.KI * self.int_alpha + self.KD * self.dif_alpha
+        self.w = self.KP * self.alpha + self.KB * beta + self.KI * self.int_alpha + self.KD * self.dif_alpha
         self.w = np.sign(self.w) * min(abs(self.w), self.w_max)
         
-        self.alpha_old = alpha
+        self.alpha_old = self.alpha
 
         """Wheel power calculation"""
         pwr_left = (2 * self.V - self.w * self.l)/2 * self.R

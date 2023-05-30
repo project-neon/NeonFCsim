@@ -10,7 +10,7 @@ def angle_adjustment(angle):
         return phi
 
 class PID_control_2(object):
-    def __init__(self, robot, default_fps=60,tf=True, max_speed=1.8,smooth_w=0, max_angular=2400,KB=0, krho=100, kp=60, ki=0, kd=0, reduce_speed=False):
+    def __init__(self, robot, default_fps=60,tf=True, max_speed=1.8,smooth_w=0, max_angular=2400,KB=0, krho=100, kp=60, ki=0, kd=0, reduce_speed=False,spread=2/3):
         self.vision = robot.game.vision
         self.field_w, self.field_h = robot.game.field.get_dimensions()
         self.robot = robot
@@ -24,6 +24,7 @@ class PID_control_2(object):
         self.ball = self.robot.strategy.match.ball
         self.right = True
         self.reduce_speed = reduce_speed
+        self.spread = spread
 
         self.l = self.robot.dimensions.get('L')/2 # half_distance_between_robot_wheels
         self.R = self.robot.dimensions.get('R')   # radius of the wheel
@@ -39,6 +40,7 @@ class PID_control_2(object):
         self.KI = ki # Integral gain of w 
         self.KD = kd # Derivative gain of w
         self.KB = KB
+        self.extra = 0
 
         # PID params for error
         self.dif_alpha = 0 # diferential param
@@ -76,7 +78,7 @@ class PID_control_2(object):
         self.alpha = angle_adjustment(gamma - self.robot.theta)
 
         # BETA
-        beta = angle_adjustment(self.desire_angle - gamma)
+        beta = angle_adjustment(self.desire_angle - math.atan2(D_y, D_x))
 
         """Calculate the parameters of PID control"""
         self._update_fps()
@@ -92,20 +94,19 @@ class PID_control_2(object):
         
         # """Objective behind the robot"""
         dt = 1
-        if self.two_face and(abs(self.alpha) > 2*math.pi/3):
+        if self.two_face and(abs(gamma - self.robot.theta) > math.pi):
             self.right = True
-        elif self.two_face and(abs(self.alpha) < math.pi/3):
+        elif self.two_face and(abs(gamma - self.robot.theta) < math.pi):
             self.right = False
-
 
         if self.right:
             self.V -= np.sign(v)*dt
-            beta = angle_adjustment(self.desire_angle - math.pi - gamma)
-            self.alpha = angle_adjustment(self.alpha - math.pi)
+            self.alpha = angle_adjustment(math.atan2(D_y, D_x) - self.robot.theta - math.pi)
+            beta = angle_adjustment(self.desire_angle- self.robot.theta + math.pi - self.alpha)
         if not self.right:
             self.V += np.sign(v)*dt
-            beta = angle_adjustment(self.desire_angle - gamma)
-
+            self.alpha = angle_adjustment(math.atan2(D_y, D_x) - self.robot.theta)
+            beta = angle_adjustment(self.desire_angle - self.robot.theta - self.alpha)
         
 
 
@@ -114,7 +115,7 @@ class PID_control_2(object):
         self.w_max = math.radians(self.max_angular - self.smooth_w*(self.robot.vx**2 + self.robot.vy**2)**(1/2))
 
         """Angular speed (w)"""
-        self.w = self.KP * self.alpha + self.KB * beta + self.KI * self.int_alpha + self.KD * self.dif_alpha
+        self.w = self.KP * self.alpha + self.KB * beta + self.KI * self.int_alpha + self.KD * self.dif_alpha + self.extra
         self.w = np.sign(self.w) * min(abs(self.w), self.w_max)
         
         self.alpha_old = self.alpha

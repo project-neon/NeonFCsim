@@ -70,12 +70,6 @@ class Match(object):
     def update(self, frame):
         self.ball.update(frame)
         self.t += 1
-        if self.t % 100 and self.t > 200:
-            for i in self.robots:
-                #print(i.get_name())
-                if i.get_name() == "ROBOT_2_blue" :
-                    self.plot(i.strategy.playerbook.get_actual_play().pathplanning.plot()[0],i.strategy.playerbook.get_actual_play().pathplanning.plot()[1])
-                    break
 
         for entity in self.opposites:
             entity.update(frame)

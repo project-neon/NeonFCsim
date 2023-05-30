@@ -55,12 +55,10 @@ class PathBot(PlayerPlay):
             if i >= 5:
                 self.pathplanning.obstacles[i].pos = [all[i-5].x,all[i-5].y]
         if self.t % 100 == 0:
-            self.pathplanning.path = self.pathplanning.merge(self.pathplanning.path, self.pathplanning.generate_path(), 0.8, 0.99)
+            self.pathplanning.path = self.pathplanning.generate_path()
             self.pathplanning.pathsmoothing(0.0,0.2,True,False)
         if ((self.robot.x - self.pathplanning.path[self.pathplanning.current].pos[0])**2 + (self.robot.y - self.pathplanning.path[self.pathplanning.current].pos[1])**2)**(1/2) < 0.17:
             self.pathplanning.next()
-        thetha = np.pi
-        self.robot.strategy.controller.set_angle(thetha)
         return self.pathplanning.path[self.pathplanning.current].pos
 
 

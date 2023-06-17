@@ -122,7 +122,37 @@ class StaticInWall(Trigger): #Ativado quando o robo está preso
                 if abs(self.robot.y) < self.delta:
                     return True
         return False
-
+class MissBall(Trigger):
+    def __init__(self,match,robot):
+        super().__init__()
+        self.robot = robot
+        self.match = match
+        self.field_dim = self.match.game.field.get_dimensions()
+    def evaluate(self,coach,actual_play):
+        if self.robot.x > self.match.ball.x:
+            return True
+        return False
+class OnBall(Trigger):
+    def __init__(self,match,robot):
+        super().__init__()
+        self.robot = robot
+        self.match = match
+        self.field_dim = self.match.game.field.get_dimensions()
+    def evaluate(self,coach,actual_play):
+        d = ((self.robot.x-self.match.ball.x)**2 + (self.robot.y-self.match.ball.y)**2)**(1/2)
+        if self.robot.x < self.match.ball.x and d < 0.1:
+            return True
+        return False
+class AttackPossible(Trigger):
+    def __init__(self,match,robot):
+        super().__init__()
+        self.robot = robot
+        self.match = match
+        self.field_dim = self.match.game.field.get_dimensions()
+    def evaluate(self,coach,actual_play):
+        if self.robot.x + 0.4 < self.match.ball.x and self.robot.y > 0.2 and self.robot.y < 1.1:
+            return True
+        return False
 
 class WaitFor(Trigger):
     def __init__(self, timeout):

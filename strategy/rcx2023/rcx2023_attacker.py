@@ -1,9 +1,34 @@
 from strategy.BaseStrategy import Strategy
-from controller import PID_control, PID_control_2
+from controller import PID_control, PID_control_2, TwoSidesLQR
 from entities import plays
+from algorithms.potential_fields import fields
 from strategy.utils.player_playbook import PlayerPlay, PlayerPlaybook
+from entities.plays.playbook import MissBall, OnBall, AttackPossible
 import numpy as np
-
+class Push(PlayerPlay):
+    def __init__(self, match, robot):
+        super().__init__(match, robot)
+        self.robot = robot
+    def get_name(self):
+        return f"<{self.robot.get_name()} PushBot>"
+    def start_up(self):
+            super().start_up()
+            controller = PID_control_2
+            controller_kwargs = {
+                'max_speed': 5,'smooth_w':300, 'max_angular': 5000,'tf':True, 'kd': 0,  
+                'kp': 20,'KB':0, 'krho': 9,'reduce_speed': False, 'spread': 3/2
+            }
+            self.robot.strategy.controller = controller(self.robot, **controller_kwargs)
+    def start(self):
+        pass
+    def update(self):
+        res = [0,0]
+        res[0] = 1.5
+        res[1] = 0.65
+        #thetha = np.arctan2((-self.match.ball.y + 0.65),(1.6-self.match.ball.x))
+       
+        #self.robot.strategy.controller.set_angle(thetha)
+        return res
 class PredictBot(PlayerPlay):
     def __init__(self, match, robot):
         super().__init__(match, robot)
@@ -38,34 +63,20 @@ class PredictBot(PlayerPlay):
             return new_pred
         res = [0,0]
         
-        if ((self.robot.x - self.match.ball.x)**2 + (self.robot.y - self.match.ball.y)**2)**(1/2) < 0.1:
-            self.robot.strategy.controller.KB = -20
-            #print("perto")
-            self.robot.strategy.controller.KP = 20
-            self.robot.strategy.controller.v_max = 5
-            res[0] = 1.5
-            res[1] = 0.65
-            thetha = np.arctan2((-self.match.ball.y + 0.65),(1.6-self.match.ball.x))
-        else:
-            self.robot.strategy.controller.v_max = 2.1
-            self.robot.strategy.controller.Ki = 0
-            self.robot.strategy.controller.KB = -80
-            self.robot.strategy.controller.KP = 80
-            d = ((self.robot.x-self.match.ball.x)**2+(self.robot.y-self.match.ball.y)**2)**(1/2)
-            v = (self.robot.vx**2 + self.robot.vy**2)**(1/2)
-            k = 1.2
-            res[0] = self.match.ball.x + self.match.ball.vx*d/max(v,0.1)*k
-            res[1] = self.match.ball.y + self.match.ball.vy*d/max(v,0.1)*k
-            thetha = np.arctan2((-self.match.ball.y + 0.65),(1.6-self.match.ball.x))
-            #self.robot.strategy.controller.extra =  + self.bot_wall_error(20)+ self.top_wall_error(20)
-            #if self.robot.x > self.match.ball.x + 0.2 and (self.robot.vx**2 + self.robot.vy**2)**(1/2) < 0.05:
-            #    self.robot.strategy.controller.spread = 2/3
-            #else:
-            #    self.robot.strategy.controller.spread = 0
-        print( self.robot.strategy.controller.right)
-        #if self.robot.strategy.controller.right:
-        #    thetha = np.pi/6
-
+        self.robot.strategy.controller.v_max = 2.1
+        self.robot.strategy.controller.Ki = 0
+        self.robot.strategy.controller.KB = -80
+        self.robot.strategy.controller.KP = 80
+        d = ((self.robot.x-self.match.ball.x)**2+(self.robot.y-self.match.ball.y)**2)**(1/2)
+        v = (self.robot.vx**2 + self.robot.vy**2)**(1/2)
+        k = 1.2
+        res[0] = self.match.ball.x + self.match.ball.vx*d/max(v,0.1)*k
+        res[1] = self.match.ball.y + self.match.ball.vy*d/max(v,0.1)*k
+        thetha = np.arctan2((-self.match.ball.y + 0.65),(1.6-self.match.ball.x))
+        #if (self.robot.y > 1 or self.robot.y < 0.3) and (self.match.ball.y > 1 or self.match.ball.y < 0.3):
+        #    self.robot.strategy.controller.extra =  + self.bot_wall_error(-10)+ self.top_wall_error(-10)
+        #else:
+        #    self.robot.strategy.controller.extra = 0
         #thetha = np.pi
         # + self.robots_error(-0.003)
         #print(self.robot.strategy.controller.extra)
@@ -78,40 +89,138 @@ class PredictBot(PlayerPlay):
             phi = phi - np.radians(360)
 
         return phi
-    def robots_error(self,k):
-        error = 0
-        for r in self.match.opposites + self.match.robots:
-            if r.get_name() != self.robot.get_name():
-                D_x = r.x - self.robot.x
-                D_y = r.y - self.robot.y
-                Dist = (D_x**2 + D_y**2)**(1/2)
-                gamma = np.arctan2(D_y,D_x) + np.pi/2
-                alpha = gamma - self.robot.theta 
-                if self.robot.strategy.controller.right:
-                    error -= self.angle_adjustment(alpha)*(1.8 - Dist)
-                else:
-                    error += self.angle_adjustment(alpha)*(1.8 - Dist)
-        return k*error
+
     def top_wall_error(self,k):
         error = 0
         gamma = np.pi
         Dist = abs(self.robot.y - 1.3)
         alpha = self.angle_adjustment(gamma - self.robot.theta)
         if self.robot.strategy.controller.right:
-            error -= self.angle_adjustment(alpha)*(1.3 - abs(Dist))
+            error -= self.angle_adjustment(alpha)*(1.3 - abs(Dist))**2
         else:
-            error += self.angle_adjustment(alpha)*(1.3 - abs(Dist))
+            error += self.angle_adjustment(alpha)*(1.3 - abs(Dist))**2
         return k*error
     def bot_wall_error(self,k):
         error = 0
-        gamma = 0
+        gamma = np.pi
         Dist = abs(self.robot.y)
         alpha = self.angle_adjustment(gamma - self.robot.theta)
         if self.robot.strategy.controller.right:
-            error -= self.angle_adjustment(alpha)*(1.3 - abs(Dist))**5
+            error -= self.angle_adjustment(alpha)*(1.3 - abs(Dist))**3
         else:
-            error += self.angle_adjustment(alpha)*(1.3 - abs(Dist))**5
+            error += self.angle_adjustment(alpha)*(1.3 - abs(Dist))**3
         return k*error
+    
+class RecoverBall(PlayerPlay):
+    def __init__(self, match, robot):
+        super().__init__(match, robot)
+        self.robot = robot
+    def get_name(self):
+        return f"<{self.robot.get_name()} RecoverBot>"
+    def start_up(self):
+        super().start_up()
+        controller = TwoSidesLQR
+        self.robot.strategy.controller = controller(self.robot)
+    def start(self):
+        self.recover = fields.PotentialField(
+        self.match,
+        name="RecoverBehaviour"
+        )
+        d = ((self.robot.x-self.match.ball.x)**2+(self.robot.y-self.match.ball.y)**2)**(1/2)
+        v = (self.robot.vx**2 + self.robot.vy**2)**(1/2)
+        k = 1.2
+        self.recover.add_field(
+            fields.PointField(
+                self.match,
+                target = lambda m: (m.ball.x + m.ball.vx*d/max(v,0.1)*k - 0.1, m.ball.y + m.ball.vy*d/max(v,0.1)),
+                radius = 0.1,
+                multiplier = 2,
+                decay = lambda x : 1
+            )
+        )
+        self.recover.add_field(
+            fields.PointField(
+                self.match,
+                target = lambda m: (m.ball.x + m.ball.vx*d/max(v,0.1)*k + 0.1, m.ball.y + m.ball.vy*d/max(v,0.1)),
+                radius = 0.01,
+                multiplier = 1.5,
+                decay = lambda x : -x**2
+            )
+        )
+        #self.recover.add_field(
+        #    fields.TangentialField(
+        #       self.match,
+        #        target = lambda m: (m.ball.x + m.ball.vx*d/max(v,0.1)*k+0.05, m.ball.y + m.ball.vy*d/max(v,0.1)-0.2),
+        #        radius = 0.30,
+        #        radius_max = 1,
+        #        clockwise = True,
+        #        decay=lambda x: -x**2,
+        #        field_limits = [0.75* 2 , 0.65*2],
+        #        multiplier = 0.5
+        #    )
+        #)
+        #self.recover.add_field(
+        #    fields.TangentialField(
+        #        self.match,
+        #        target = lambda m: (m.ball.x + m.ball.vx*d/max(v,0.1)*k+0.05, m.ball.y + m.ball.vy*d/max(v,0.1)+0.2),
+        #        radius = 0.30,
+        #        radius_max = 1,
+        #        clockwise = False,
+        #        decay=lambda x: -x**2,
+        #        field_limits = [0.75* 2 , 0.65*2],
+        #        multiplier = 0.5
+        #    )
+        #)
+
+        for robot in self.match.robots + self.match.opposites:
+            if robot.get_name() == self.robot.get_name():
+                continue
+            self.recover.add_field(
+                fields.PointField(
+                    self.match,
+                    target = lambda m, r=robot: (
+                        r.x,
+                        r.y
+                    ),
+                    radius = .01,
+                    decay = lambda x: -x,
+                    multiplier = 0.1
+                )
+            )
+        self.recover.add_field(
+            fields.LineField(
+                self.match,
+                target= [self.match.game.field.get_dimensions()[0]/2, 0],                                                                                                                                                                                                                                                                                                                                          
+                theta = 0,
+                line_size = (self.match.game.field.get_dimensions()[0]),
+                line_dist = 0.25,
+                line_dist_max = 0.5,
+                inverse = True,
+                decay = lambda x: -x,
+                multiplier = 0.5
+            )
+        )
+        self.recover.add_field(
+            fields.LineField(
+                self.match,
+                target= [self.match.game.field.get_dimensions()[0]/2, self.match.game.field.get_dimensions()[1]],                                                                                                                                                                                                                                                                                                                                          
+                theta = 0,
+                line_size = (self.match.game.field.get_dimensions()[0]),
+                line_dist = 0.25,
+                line_dist_max = 0.5,
+                inverse = True,
+                decay = lambda x: -x,
+                multiplier = 0.5
+            )
+        )
+        pass
+    def update(self):
+        #v = 1
+        #print(self.recover.compute([self.robot.x, self.robot.y]))
+        #vx = self.recover.compute([self.robot.x, self.robot.y])[0]/(self.recover.compute([self.robot.x, self.robot.y])[0]**2 + self.recover.compute([self.robot.x, self.robot.y])[1]**2)**(1/2)
+        #vy = self.recover.compute([self.robot.x, self.robot.y])[1]/(self.recover.compute([self.robot.x, self.robot.y])[0]**2 + self.recover.compute([self.robot.x, self.robot.y])[1]**2)**(1/2)
+        #return [vx*v, vy*v]
+        return self.recover.compute([self.robot.x,self.robot.y])
 class MainAttacker(Strategy):
     def __init__(self, match, name="MainAttacker"):
         super().__init__(match, name, controller=PID_control_2)
@@ -119,12 +228,33 @@ class MainAttacker(Strategy):
     def start(self, robot=None):
         super().start(robot=robot)
         self.playerbook = PlayerPlaybook(self.match.coach, self.robot)
+        self.mb = MissBall(self.match, self.robot)
+        self.onball = OnBall(self.match,self.robot)
+        self.attack = AttackPossible(self.match,self.robot)
+
 
         pred = PredictBot(self.match, self.robot)
         pred.start()
+
+        recb = RecoverBall(self.match, self.robot)
+        recb.start()
+
+        push = Push(self.match, self.robot)
+        push.start()
+
         self.playerbook.add_play(pred)
+        self.playerbook.add_play(recb)
+        self.playerbook.add_play(push)
+
+        pred.add_transition(self.mb,recb)
+        push.add_transition(self.mb,recb)
+        pred.add_transition(self.onball,push)
+        recb.add_transition(self.onball,push)
+        recb.add_transition(self.attack,pred)
+        push.add_transition(self.attack,pred)
         self.playerbook.set_play(pred)
     def decide(self):
+        print(self.playerbook.actual_play)
         res = self.playerbook.update()
         return res
     def update(self):

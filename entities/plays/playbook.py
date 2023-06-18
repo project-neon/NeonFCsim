@@ -127,20 +127,31 @@ class MissBall(Trigger):
         super().__init__()
         self.robot = robot
         self.match = match
-        self.field_dim = self.match.game.field.get_dimensions()
     def evaluate(self,coach,actual_play):
         if self.robot.x > self.match.ball.x:
             return True
         return False
 class OnBall(Trigger):
-    def __init__(self,match,robot):
+    def __init__(self,match,robot,distance):
         super().__init__()
         self.robot = robot
         self.match = match
-        self.field_dim = self.match.game.field.get_dimensions()
+        self.distance = distance
     def evaluate(self,coach,actual_play):
         d = ((self.robot.x-self.match.ball.x)**2 + (self.robot.y-self.match.ball.y)**2)**(1/2)
-        if self.robot.x < self.match.ball.x and d < 0.1:
+        if self.robot.x < self.match.ball.x and d < self.distance:
+            return True
+        return False
+class OnPoint(Trigger):
+    def __init__(self,match,robot,point,distance):
+        super().__init__()
+        self.match = match
+        self.robot = robot
+        self.point = point
+        self.distance = distance
+    def evaluate(self,coach,actual_play):
+        d = ((self.robot.x - self.point[0](self.match))**2 + (self.robot.y - self.point[1](self.match))**2)
+        if d <= self.distance:
             return True
         return False
 class AttackPossible(Trigger):

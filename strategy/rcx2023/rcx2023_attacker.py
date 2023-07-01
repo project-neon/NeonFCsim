@@ -44,17 +44,13 @@ class AjustAngle(PlayerPlay):
     def update(self):
         res = [self.match.ball.x, self.match.ball.y]
         dif = self.robot.theta - np.arctan((self.robot.y-res[1])/(self.robot.x-res[0]))
+        if self.robot.team_color == "yellow":
+            dif -= np.pi
         delta = 0.2
-        if (dif < delta):
+        if (abs(dif) < delta):
             self.robot.strategy.playerbook.set_play(self.nextplay)
         self.robot.strategy.spin = dif*20
         return res
-    def angle_adjustment(self,angle):
-        phi = angle % np.radians(360)
-        if phi > np.radians(180):
-            phi = phi - np.radians(360)
-
-        return phi
 class PredictBot(PlayerPlay):
     def __init__(self, match, robot):
         super().__init__(match, robot)
@@ -65,9 +61,10 @@ class PredictBot(PlayerPlay):
             super().start_up()
             controller = PID_control_2
             controller_kwargs = {
-                'max_speed': 5,'smooth_w':300, 'max_angular': 5000,'tf':True, 'kd': 0,  
+                'max_speed': 5,'smooth_w':200, 'max_angular': 5000,'tf':False, 'kd': 0,  
                 'kp': 80,'KB':-40, 'krho': 9,'reduce_speed': False, 'spread': 3/2
             }
+
             self.robot.strategy.controller = controller(self.robot, **controller_kwargs)
    # def update(self):
     #    return super().update()
@@ -89,8 +86,8 @@ class PredictBot(PlayerPlay):
             return new_pred
         res = [0,0]
         d = ((self.robot.x-self.match.ball.x)**2+(self.robot.y-self.match.ball.y)**2)**(1/2)
-        if d > 0.1:
-            self.robot.strategy.controller.v_max = 2.1
+        if d > 0.15:
+            self.robot.strategy.controller.v_max = 2.1 + d**2 #+ (np.pi - self.robot.strategy.controller.beta)/6
             self.robot.strategy.controller.Ki = 0
             self.robot.strategy.controller.KB = -80
             self.robot.strategy.controller.KP = 80
@@ -104,6 +101,7 @@ class PredictBot(PlayerPlay):
             self.robot.strategy.controller.v_max = 10
             self.robot.strategy.controller.KP = 100
             self.robot.strategy.controller.KB = 0
+            self.robot.strategy.controller.KD = 0
             return [1.5,0.65]
         #if (self.robot.y > 1 or self.robot.y < 0.3) and (self.match.ball.y > 1 or self.match.ball.y < 0.3):
         #    self.robot.strategy.controller.extra =  + self.bot_wall_error(-10)+ self.top_wall_error(-10)
@@ -122,26 +120,6 @@ class PredictBot(PlayerPlay):
 
         return phi
 
-    def top_wall_error(self,k):
-        error = 0
-        gamma = np.pi
-        Dist = abs(self.robot.y - 1.3)
-        alpha = self.angle_adjustment(gamma - self.robot.theta)
-        if self.robot.strategy.controller.right:
-            error -= self.angle_adjustment(alpha)*(1.3 - abs(Dist))**2
-        else:
-            error += self.angle_adjustment(alpha)*(1.3 - abs(Dist))**2
-        return k*error
-    def bot_wall_error(self,k):
-        error = 0
-        gamma = np.pi
-        Dist = abs(self.robot.y)
-        alpha = self.angle_adjustment(gamma - self.robot.theta)
-        if self.robot.strategy.controller.right:
-            error -= self.angle_adjustment(alpha)*(1.3 - abs(Dist))**3
-        else:
-            error += self.angle_adjustment(alpha)*(1.3 - abs(Dist))**3
-        return k*error
     
 class RecoverBall(PlayerPlay):
     def __init__(self, match, robot):
@@ -164,7 +142,7 @@ class RecoverBall(PlayerPlay):
         self.recover.add_field(
             fields.PointField(
                 self.match,
-                target = lambda m: (max(0,m.ball.x + m.ball.vx*d/max(v,0.1)*k - 0.15), m.ball.y + m.ball.vy*d/max(v,0.1)),
+                target = lambda m: (max(0,m.ball.x - 0.2 + m.ball.vx*d/max(v,0.1)*k), m.ball.y - 0.2*np.sin(np.arctan2((-m.ball.y + 0.65),(1.6-m.ball.x))) + m.ball.vy*d/max(v,0.1)),
                 radius = 0.1,
                 multiplier = 2,
                 decay = lambda x : 1
@@ -173,7 +151,7 @@ class RecoverBall(PlayerPlay):
         self.recover.add_field(
             fields.PointField(
                 self.match,
-                target = lambda m: (m.ball.x + m.ball.vx*d/max(v,0.1)*k + 0.1, m.ball.y + m.ball.vy*d/max(v,0.1)),
+                target = lambda m: (m.ball.x + 0.1, m.ball.y),
                 radius = 0.01,
                 multiplier = 1.5,
                 decay = lambda x : -x**2
@@ -229,7 +207,7 @@ class RecoverBall(PlayerPlay):
                 line_dist_max = 0.5,
                 inverse = True,
                 decay = lambda x: -x,
-                multiplier = 0.5
+                multiplier = 0.3
             )
         )
         self.recover.add_field(
@@ -242,7 +220,7 @@ class RecoverBall(PlayerPlay):
                 line_dist_max = 0.5,
                 inverse = True,
                 decay = lambda x: -x,
-                multiplier = 0.5
+                multiplier = 0.3
             )
         )
         pass
@@ -264,7 +242,9 @@ class MainAttacker(Strategy):
         self.mb = MissBall(self.match, self.robot)
         self.onball = OnBall(self.match,self.robot,0.1)
         self.attack = AttackPossible(self.match,self.robot)
-        self.op = OnPoint(self.match,self.robot,[lambda m: m.ball.x - 0.15,lambda m: m.ball.y],0.05)
+        posx = lambda m: m.ball.x - 0.3*np.cos(np.arctan2((-m.ball.y + 0.65),(1.6-m.ball.x)))
+        posy = lambda m: m.ball.y + 0.3*np.sin(-np.arctan2((-m.ball.y + 0.65),(1.6-m.ball.x)))
+        self.op = OnPoint(self.match,self.robot,[posx,posy],0.05)
         self.wall = StaticInWall(self.match,self.robot)
 
         pred = PredictBot(self.match, self.robot)
@@ -294,7 +274,6 @@ class MainAttacker(Strategy):
         #push.add_transition(self.attack,pred)
         self.playerbook.set_play(recb)
     def decide(self):
-        print(self.playerbook.actual_play)
         self.spin = 0
         res = self.playerbook.update()
         return res

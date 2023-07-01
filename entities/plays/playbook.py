@@ -164,7 +164,20 @@ class AttackPossible(Trigger):
         if self.robot.x + 0.4 < self.match.ball.x and self.robot.y > 0.2 and self.robot.y < 1.1:
             return True
         return False
-
+class GoalkeeperOut(Trigger):
+    def __init__(self,match,robot,dist, invert=False):
+        super().__init__()
+        self.robot = robot
+        self.match = match
+        self.invert = invert
+        self.dist = dist
+        self.field_dim = self.match.game.field.get_dimensions()
+    def evaluate(self,coach,actual_play):
+        if self.robot.x > self.dist and not self.invert:
+            return True
+        elif self.robot.x < self.dist and self.invert:
+            return True
+        return False
 class WaitFor(Trigger):
     def __init__(self, timeout):
         """

@@ -12,6 +12,8 @@ class MainPlay(Play):
             strategy.rcx2023.MainGoalkeeper(self.match, 'GoalKeeper'),
             strategy.Strategy(self.match, 'Midfielder'),
             strategy.rcx2023.MainAttacker(self.match, 'MainAttacker'),
+            strategy.rcx2023.RadialDefender(self.match, 'RadialDefender'),
+            strategy.rcx2023.RadialDefender(self.match, 'RadialDefender')
         ]
 
     def _can_play(self):

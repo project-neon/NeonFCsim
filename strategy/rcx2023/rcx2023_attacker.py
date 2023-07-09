@@ -61,7 +61,7 @@ class PredictBot(PlayerPlay):
             super().start_up()
             controller = PID_control_2
             controller_kwargs = {
-                'max_speed': 5,'smooth_w':200, 'max_angular': 5000,'tf':False, 'kd': 0,  
+                'max_speed': 5,'smooth_w':200, 'max_angular': 5000,'tf':True, 'kd': 0,  
                 'kp': 80,'KB':-40, 'krho': 9,'reduce_speed': False, 'spread': 3/2
             }
 

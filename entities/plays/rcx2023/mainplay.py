@@ -10,7 +10,7 @@ class MainPlay(Play):
         self.coach = coach
         self.strategies = [
             strategy.rcx2023.MainGoalkeeper(self.match, 'GoalKeeper'),
-            strategy.Strategy(self.match, 'Midfielder'),
+            strategy.rcx2023.MainMidFielder(self.match, 'Midfielder'),
             strategy.rcx2023.MainAttacker(self.match, 'MainAttacker'),
         ]
 

@@ -40,11 +40,12 @@ class Push(PlayerPlay):
             self.robot.strategy.playerbook.set_play(self.nextplay)
         return res
 class AjustAngle(PlayerPlay):
-    def __init__(self, match, robot, nextplay):
+    def __init__(self, match, robot, nextplay, nextplay2):
         super().__init__(match, robot)
         self.fsize = self.match.game.field.get_dimensions()
         self.robot = robot
         self.nextplay = nextplay
+        self.nextplay2 = nextplay2
     def get_name(self):
         return f"<{self.robot.get_name()} AjustAngle>"
     def start_up(self):
@@ -64,7 +65,10 @@ class AjustAngle(PlayerPlay):
             dif -= np.pi
         delta = 0.05
         if (abs(dif) < delta):
-            self.robot.strategy.playerbook.set_play(self.nextplay)
+            if ((self.robot.x - self.match.ball.x)**2 + (self.robot.y - self.match.ball.y)**2)**(1/2) < 0.4:
+                self.robot.strategy.playerbook.set_play(self.nextplay)
+            else:
+                self.robot.strategy.playerbook.set_play(self.nextplay2)
         self.robot.strategy.spin = dif*20
         return res
 class PredictBot(PlayerPlay):
@@ -285,7 +289,7 @@ class MainAttacker(Strategy):
         push = Push(self.match, self.robot, recb)
         push.start()
         
-        ajusta = AjustAngle(self.match, self.robot, push)
+        ajusta = AjustAngle(self.match, self.robot, push, pred)
         ajusta.start()
 
         self.playerbook.add_play(pred)

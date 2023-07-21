@@ -31,10 +31,17 @@ class Coach(BaseCoach): # heranca da classe abstrata
         return config
 
     def get_positions(self, foul, team_color, foul_color, quadrant):
-        if foul == 'PENALTY_KICK':
-            replacement_file = self.get_placement_file()
-            if replacement_file:
+        replacements = self._get_positions(foul, team_color, foul_color, quadrant)
+
+        replacement_file = self.get_placement_file()
+        if replacement_file:
+            if foul == 'KICKOFF':
+                replacements = replacement_file[team_color][foul]["POSITIONS"]
+            elif foul == 'FREE_BALL':
+                replacements = replacement_file[team_color][foul][quadrant]
+            elif foul == 'PENALTY_KICK':
                 replacements = replacement_file[team_color][foul][foul_color]
-                return replacements
+            elif foul == 'GOAL_KICK':
+                replacements = replacement_file[team_color][foul][foul_color]
         
-        return self._get_positions(foul, team_color, foul_color, quadrant)
+        return replacements

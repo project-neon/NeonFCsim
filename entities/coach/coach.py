@@ -12,3 +12,4 @@ class BaseCoach(ABC):
 
     def _get_positions(self, foul, team_color, foul_color, quadrant):
         return []
+    

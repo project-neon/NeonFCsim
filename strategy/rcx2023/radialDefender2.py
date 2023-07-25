@@ -64,14 +64,16 @@ class RadialDefender(Strategy):
         if self.robo_cima: # fazer os robos ficarem distanciados por um angulo.
             if self.mr < mo + erro:
                 mo = np.tan(np.arctan(m) + self.dist_robos)
-            elif self.mr > mo - erro: 
-                mo = (self.ponto_gol[1] - self.pos_robo_baixo[1])/(self.ponto_gol[0] - self.pos_robo_baixo[0])
+            elif self.mr > mo - erro:
+                if  self.ponto_gol[0] - self.pos_robo_baixo[0] != 0:
+                    mo = (self.ponto_gol[1] - self.pos_robo_baixo[1])/(self.ponto_gol[0] - self.pos_robo_baixo[0])
                 mo = np.tan(np.arctan(m) + 2*self.dist_robos)
             if self.mr < mo + erro:
                 mo = np.tan(np.arctan(m) + self.dist_robos)
                 dm = np.tan(np.arctan(self.mr) + dd)
             elif self.mr > mo - erro: 
-                mo = (self.ponto_gol[1] - self.pos_robo_baixo[1])/(self.ponto_gol[0] - self.pos_robo_baixo[0])
+                if self.ponto_gol[0] - self.pos_robo_baixo[0] != 0:
+                    mo = (self.ponto_gol[1] - self.pos_robo_baixo[1])/(self.ponto_gol[0] - self.pos_robo_baixo[0])
                 mo = np.tan(np.arctan(m) + 2*self.dist_robos)
                 dm = np.tan(np.arctan(self.mr) - dd)
         else:

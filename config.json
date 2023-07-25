@@ -16,13 +16,13 @@
     "match" : {
         "team_side": "left",
         "team_color": "blue",
-        "coach_name": "IRON_2023_3V3",
-        "category": "3v3",
+        "coach_name": "RCX2023",
+        "category": "5v5",
         "coach_parameters": {
             "penalty_taker": "short_shot"
         }
     },
-    "referee": true,
+    "referee": false,
     "data_sender": false,
     "api": false
 }

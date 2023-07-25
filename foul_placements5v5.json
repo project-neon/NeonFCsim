@@ -3,65 +3,72 @@
         "KICKOFF": {
             "POSITIONS": [
                 {"robot_id": 0, "x": -1.06, "y": 0.00, "orientation": 90},
-                {"robot_id": 1, "x": -0.60, "y": 0.30, "orientation": 0},
-                {"robot_id": 2, "x": -0.60, "y": -0.30, "orientation": 0},
-                {"robot_id": 3, "x": -0.40, "y": 0.00, "orientation": 0},
-                {"robot_id": 4, "x": -0.30, "y": 0.00, "orientation": 0}
+                {"robot_id": 1, "x": -0.60, "y": 0.00, "orientation": 0},
+                {"robot_id": 2, "x": -0.30, "y": 0.00, "orientation": 0},
+                {"robot_id": 3, "x": -0.70, "y": -0.30, "orientation": 90},
+                {"robot_id": 4, "x": -0.70, "y": 0.30, "orientation": 90}
             ]
         },
         "FREE_BALL": {
             "QUADRANT_1": [
                 {"robot_id": 0, "x": -1.06, "y": 0.00, "orientation": 90},  
-                {"robot_id": 1, "x": -0.83, "y": 0.40, "orientation": 0},   
-                {"robot_id": 2, "x": -0.76, "y": 0.30, "orientation": 0}, 
-                {"robot_id": 3, "x": -0.10, "y": 0.20, "orientation": 0}, 
-                {"robot_id": 4, "x": 0.3, "y": 0.6, "orientation": 0} 
+                {"robot_id": 1, "x": -0.10, "y": 0.30, "orientation": 0},
+                {"robot_id": 2, "x": 0.30, "y": 0.60, "orientation": 0},
+                {"robot_id": 3, "x": -0.69, "y": 0.30, "orientation": -90},
+                {"robot_id": 4, "x": -0.63, "y": -0.30, "orientation": 90}
             ],
             "QUADRANT_2": [
                 {"robot_id": 0, "x": -1.06, "y": 0, "orientation": 90},   
-                {"robot_id": 1, "x": -0.85, "y": -0.080, "orientation": 90},  
-                {"robot_id": 2, "x": -0.90, "y": -0.150, "orientation": 90}, 
-                {"robot_id": 3, "x": -0.65, "y": -0.30, "orientation": 90}, 
-                {"robot_id": 4, "x": -0.80, "y": 0.6, "orientation": 0}  
+                {"robot_id": 1, "x": -0.65, "y": -0.30, "orientation": 70},
+                {"robot_id": 2, "x": -0.80, "y": 0.6, "orientation": 0},
+                {"robot_id": 3, "x": -0.80, "y": -0.08, "orientation": 90},
+                {"robot_id": 4, "x": -0.85, "y": -0.16, "orientation": 90}
             ],
             "QUADRANT_3": [
                 {"robot_id": 0, "x": -1.06, "y": 0, "orientation": 90},   
-                {"robot_id": 1, "x": -0.85, "y": 0.080, "orientation": 90},  
-                {"robot_id": 2, "x": -0.90, "y": 0.150, "orientation": 90},
-                {"robot_id": 3, "x": -0.65, "y": 0.30, "orientation": 90}, 
-                {"robot_id": 4, "x": -0.80, "y": -0.6, "orientation": 0}  
+                {"robot_id": 1, "x": -0.65, "y": 0.30, "orientation": -70},
+                {"robot_id": 2, "x": -0.80, "y": -0.60, "orientation": 0},
+                {"robot_id": 3, "x": -0.85, "y": 0.16, "orientation": 90},
+                {"robot_id": 4, "x": -0.80, "y": 0.08, "orientation": 90}
             ],
             "QUADRANT_4": [
                 {"robot_id": 0, "x": -1.06, "y": 0, "orientation": 90},  
-                {"robot_id": 1, "x": -0.83, "y": -0.40, "orientation": 0}, 
-                {"robot_id": 2, "x": -0.76, "y": -0.30, "orientation": 0}, 
-                {"robot_id": 3, "x": -0.10, "y": -0.20, "orientation": 0}, 
-                {"robot_id": 4, "x": 0.3, "y": -0.6, "orientation": 0}  
+                {"robot_id": 1, "x": -0.10, "y": -0.30, "orientation": 0},
+                {"robot_id": 2, "x": 0.30, "y": -0.60, "orientation": 0},
+                {"robot_id": 3, "x": -0.83, "y": -0.40, "orientation": 90},
+                {"robot_id": 4, "x": -0.76, "y": -0.30, "orientation": 90}
             ]
         },
         "GOAL_KICK": {
             "BLUE": [
-                {"robot_id": 2, "x": -1, "y": 0, "orientation": 0},
-                {"robot_id": 0, "x": -0.8, "y": 0, "orientation": 0},
-                {"robot_id": 1, "x": -0.90, "y": 0.58, "orientation": 0},
-                {"robot_id": 3, "x": 0.2, "y": -0.4, "orientation": 0},
-                {"robot_id": 4, "x": 0.45, "y": 0.45, "orientation": 0}
+                {"robot_id": 0, "x": -1.03, "y": -0.46, "orientation": 90},
+                {"robot_id": 1, "x": -0.45, "y": -0.50, "orientation": 0},
+                {"robot_id": 2, "x": -1.04, "y": -0.03, "orientation": 30},
+                {"robot_id": 3, "x": -0.75, "y": -0.60, "orientation": 0},
+                {"robot_id": 4, "x": -0.75, "y": 0.60, "orientation": 0}
+            ],
+            "YELLOW": [
+                {"robot_id": 0, "x": -1.05, "y": 0, "orientation": 90},
+                {"robot_id": 1, "x": -0.45, "y": -0.20, "orientation": 0},
+                {"robot_id": 2, "x": -0.20, "y": 0, "orientation": 0},
+                {"robot_id": 3, "x": -0.80, "y": -0.50, "orientation": 90},
+                {"robot_id": 4, "x": -0.80, "y": 0.50, "orientation": 90}
             ]
         },
         "PENALTY_KICK": {
             "BLUE": [
                 {"robot_id": 0, "x": -1.06, "y": 0, "orientation": 90},
-                {"robot_id": 1, "x": -0.3, "y": -0.55, "orientation": 0},
-                {"robot_id": 2, "x": -0.3, "y": 0.45, "orientation": 0},
-                {"robot_id": 3, "x": -0.3, "y": -0.05, "orientation": 0},
-                {"robot_id": 4, "x": -0.4, "y": 0, "orientation": 0}
+                {"robot_id": 1, "x": -0.1, "y": 0.35, "orientation": 0},
+                {"robot_id": 2, "x": 0.64, "y": 0, "orientation": 0},
+                {"robot_id": 3, "x": -0.4, "y": -0.5, "orientation": 0},
+                {"robot_id": 4, "x": -0.4, "y": 0.5, "orientation": 0}
             ],
             "YELLOW": [
                 {"robot_id": 0, "x": -1.06, "y": 0, "orientation": 0},
                 {"robot_id": 1, "x": 0.05, "y": 0.4, "orientation": 0},
-                {"robot_id": 2, "x": 0.05, "y": 0.2, "orientation": 0},
-                {"robot_id": 3, "x": 0.05, "y": -0.2, "orientation": 0},
-                {"robot_id": 4, "x": 0.05, "y": -0.4, "orientation": 0}
+                {"robot_id": 2, "x": 0.05, "y": -0.2, "orientation": 0},
+                {"robot_id": 3, "x": 0.05, "y": 0.7, "orientation": 0},
+                {"robot_id": 4, "x": 0.05, "y": -0.7, "orientation": 0}
             ]
         }
     },
@@ -69,65 +76,72 @@
         "KICKOFF": {
             "POSITIONS": [
                 {"robot_id": 0, "x": 1.05, "y": 0.00, "orientation": 90},
-                {"robot_id": 1, "x": 0.60, "y": 0.30, "orientation": 0},
-                {"robot_id": 2, "x": 0.60, "y": -0.30, "orientation": 0},
-                {"robot_id": 3, "x": 0.40, "y": 0.00, "orientation": 0},
-                {"robot_id": 4, "x": 0.30, "y": 0.00, "orientation": 0}
+                {"robot_id": 1, "x": 0.60, "y": 0.00, "orientation": 0},
+                {"robot_id": 2, "x": 0.30, "y": 0.00, "orientation": 0},
+                {"robot_id": 3, "x": 0.70, "y": 0.30, "orientation": 90},
+                {"robot_id": 4, "x": 0.70, "y": -0.30, "orientation": 90}
             ]
         },
         "FREE_BALL": {
             "QUADRANT_1": [
                 {"robot_id": 0, "x": 1.06, "y": 0, "orientation": 90},   
-                {"robot_id": 1, "x": 0.85, "y": -0.080, "orientation": 90},  
-                {"robot_id": 2, "x": 0.90, "y": -0.150, "orientation": 90}, 
-                {"robot_id": 3, "x": 0.65, "y": -0.30, "orientation": 90}, 
-                {"robot_id": 4, "x": 0.80, "y": 0.6, "orientation": 0}  
+                {"robot_id": 1, "x": 0.65, "y": -0.30, "orientation": 110},
+                {"robot_id": 2, "x": 0.80, "y": 0.60, "orientation": 0},
+                {"robot_id": 3, "x": 0.80, "y": -0.08, "orientation": 90},
+                {"robot_id": 4, "x": 0.85, "y": -0.16, "orientation": 90}
             ],
             "QUADRANT_2": [
                 {"robot_id": 0, "x": 1.05, "y": 0.00, "orientation": 90},  
-                {"robot_id": 1, "x": 0.86, "y": 0.4, "orientation": 0},   
-                {"robot_id": 2, "x": 0.77, "y": 0.30, "orientation": 0}, 
-                {"robot_id": 3, "x": 0.10, "y": 0.20, "orientation": 0}, 
-                {"robot_id": 4, "x": -0.30, "y": 0.60, "orientation": 0} 
+                {"robot_id": 1, "x": 0.10, "y": 0.30, "orientation": 0},
+                {"robot_id": 2, "x": -0.30, "y": 0.60, "orientation": 0},
+                {"robot_id": 3, "x": 0.86, "y": 0.40, "orientation": 90},
+                {"robot_id": 4, "x": 0.77, "y": 0.30, "orientation": 90}
             ],
             "QUADRANT_3": [
                 {"robot_id": 0, "x": 1.05, "y": 0, "orientation": 90},  
-                {"robot_id": 1, "x": 0.86, "y": -0.40, "orientation": 0}, 
-                {"robot_id": 2, "x": 0.77, "y": -0.30, "orientation": 0}, 
-                {"robot_id": 3, "x": 0.10, "y": -0.20, "orientation": 0}, 
-                {"robot_id": 4, "x": -0.30, "y": -0.60, "orientation": 0} 
+                {"robot_id": 1, "x": 0.10, "y": -0.30, "orientation": 0},
+                {"robot_id": 2, "x": -0.30, "y": -0.60, "orientation": 0},
+                {"robot_id": 3, "x": 0.86, "y": -0.40, "orientation": 90},
+                {"robot_id": 4, "x": 0.77, "y": -0.30, "orientation": 90}
             ],
             "QUADRANT_4": [
                 {"robot_id": 0, "x": 1.06, "y": 0, "orientation": 90},   
-                {"robot_id": 1, "x": 0.85, "y": 0.080, "orientation": 90},  
-                {"robot_id": 2, "x": 0.90, "y": 0.150, "orientation": 90},
-                {"robot_id": 3, "x": 0.65, "y": 0.30, "orientation": 90}, 
-                {"robot_id": 4, "x": 0.80, "y": -0.6, "orientation": 0}  
+                {"robot_id": 1, "x": 0.65, "y": 0.30, "orientation": -110},
+                {"robot_id": 2, "x": 0.80, "y": -0.60, "orientation": 0},
+                {"robot_id": 3, "x": 0.85, "y": 0.08, "orientation": 90},
+                {"robot_id": 4, "x": 0.90, "y": 0.15, "orientation": 90}
             ]
         },
         "GOAL_KICK": {
             "YELLOW": [
-                {"robot_id": 2, "x": 1, "y": 0, "orientation": 0},
-                {"robot_id": 0, "x": 0.8, "y": 0, "orientation": 0},
-                {"robot_id": 1, "x": 0.90, "y": 0.58, "orientation": 0},
-                {"robot_id": 3, "x": -0.2, "y": -0.4, "orientation": 0},
-                {"robot_id": 4, "x": -0.45, "y": 0.45, "orientation": 0}
+                {"robot_id": 0, "x": 1.03, "y": -0.46, "orientation": 90},
+                {"robot_id": 1, "x": 0.45, "y": -0.45, "orientation": 0},
+                {"robot_id": 2, "x": 1.03, "y": -0.03, "orientation": -30},
+                {"robot_id": 3, "x": 0.75, "y": -0.60, "orientation": 0},
+                {"robot_id": 4, "x": 0.75, "y": 0.60, "orientation": 0}
+            ],
+            "BLUE": [
+                {"robot_id": 0, "x": 1.05, "y": 0, "orientation": 90},
+                {"robot_id": 1, "x": 0.45, "y": -0.20, "orientation": 0},
+                {"robot_id": 2, "x": 0.20, "y": 0, "orientation": 0},
+                {"robot_id": 3, "x": 0.80, "y": -0.50, "orientation": 90},
+                {"robot_id": 4, "x": 0.80, "y": 0.50, "orientation": 90}
             ]
         },
         "PENALTY_KICK": {
             "YELLOW": [
                 {"robot_id": 0, "x": 1.05, "y": 0, "orientation": 90},
-                {"robot_id": 1, "x": 0.3, "y": 0.55, "orientation": 0},
-                {"robot_id": 2, "x": 0.3, "y": -0.45, "orientation": 0},
-                {"robot_id": 3, "x": 0.3, "y": 0.05, "orientation": 0},
-                {"robot_id": 4, "x": -0.6, "y": 0, "orientation": 0}
+                {"robot_id": 1, "x": 0.1, "y": -0.35, "orientation": 0},
+                {"robot_id": 2, "x": -0.64, "y": 0, "orientation": 0},
+                {"robot_id": 3, "x": 0.4, "y": -0.5, "orientation": 0},
+                {"robot_id": 4, "x": 0.4, "y": 0.5, "orientation": 0}
             ],
             "BLUE": [
                 {"robot_id": 0, "x": 1.06, "y": 0, "orientation": 0},
                 {"robot_id": 1, "x": -0.05, "y": 0.4, "orientation": 0},
-                {"robot_id": 2, "x": -0.05, "y": 0.2, "orientation": 0},
-                {"robot_id": 3, "x": -0.05, "y": -0.2, "orientation": 0},
-                {"robot_id": 4, "x": -0.05, "y": -0.4, "orientation": 0}
+                {"robot_id": 2, "x": -0.05, "y": -0.2, "orientation": 0},
+                {"robot_id": 3, "x": -0.05, "y": -0.7, "orientation": 0},
+                {"robot_id": 4, "x": -0.05, "y": 0.7, "orientation": 0}
             ]
         }
     }

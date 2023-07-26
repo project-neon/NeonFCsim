@@ -20,7 +20,7 @@ class PredictBot(PlayerPlay):
             controller = PID_control_2
             controller_kwargs = {
                 'max_speed': 5,'smooth_w':200, 'max_angular': 5000,'tf':True, 'kd': 0,  
-                'kp': 100,'KB':-80, 'krho': 9,'reduce_speed': False, 'spread': 3/2
+                'kp': 100,'KB':-20, 'krho': 9,'reduce_speed': False, 'spread': 3/2
             }
 
             self.robot.strategy.controller = controller(self.robot, **controller_kwargs)
@@ -30,7 +30,7 @@ class PredictBot(PlayerPlay):
         pass
     def update(self):
 
-        if self.robot.strategy.playerbook.get_actual_play().get_running_time() > self.time:
+        if self.robot.strategy.playerbook.get_actual_play().get_running_time() > self.time or self.match.ball.x < self.robot.x:
             self.robot.strategy.playerbook.set_play(self.nextplay)
             return [0,0]
 
@@ -61,8 +61,8 @@ class PredictBot(PlayerPlay):
         if d > 0.15:
             self.robot.strategy.controller.v_max = 2.1 + d**2 #+ (np.pi - self.robot.strategy.controller.beta)/6
             self.robot.strategy.controller.Ki = 0
-            self.robot.strategy.controller.KB = -80
-            self.robot.strategy.controller.KP = 80
+            self.robot.strategy.controller.KB = -35/max(1,d)
+            self.robot.strategy.controller.KP = 100
             v = (self.robot.vx**2 + self.robot.vy**2)**(1/2)
             k = 1.2
             res[0] = self.match.ball.x + self.match.ball.vx*d/max(v,0.1)*k
@@ -115,17 +115,17 @@ class PredictBotPID(PlayerPlay):
     def start(self):
         pass
     def update(self):
-        if self.robot.strategy.playerbook.get_actual_play().get_running_time() > self.time:
+        if self.robot.strategy.playerbook.get_actual_play().get_running_time() > self.time or self.match.ball.x < self.robot.x:
             self.robot.strategy.playerbook.set_play(self.nextplay)
             return [0,0]
-        dx = self.robot.x - self.match.ball.x
-        dy = self.robot.y - self.match.ball.y
-        delta = 0.08
-        if np.sqrt(dx**2 + dy**2) < delta:
-            if self.robot.team_color == "blue":
-                self.robot.strategy.push = 20000
-            else:
-                self.robot.strategy.push = -20000
+        #dx = self.robot.x - self.match.ball.x
+        #dy = self.robot.y - self.match.ball.y
+        #delta = 0.08
+        #if np.sqrt(dx**2 + dy**2) < delta:
+        #    if self.robot.team_color == "blue":
+        #        self.robot.strategy.push = 20000
+        #    else:
+        #        self.robot.strategy.push = -20000
 
         def ajust_pred(pos):
             new_pred = pos
@@ -143,7 +143,7 @@ class PredictBotPID(PlayerPlay):
         res = [0,0]
         d = ((self.robot.x-self.match.ball.x)**2+(self.robot.y-self.match.ball.y)**2)**(1/2)
         if d > 0.15:
-            self.robot.strategy.controller.v_max = 2.1 + d**2 #+ (np.pi - self.robot.strategy.controller.beta)/6
+            self.robot.strategy.controller.v_max = 2.1 + d**3 #+ (np.pi - self.robot.strategy.controller.beta)/6
             self.robot.strategy.controller.Ki = 0
             self.robot.strategy.controller.KP = 80
             v = (self.robot.vx**2 + self.robot.vy**2)**(1/2)
@@ -152,8 +152,8 @@ class PredictBotPID(PlayerPlay):
             res[1] = self.match.ball.y + self.match.ball.vy*d/max(v,0.1)*k
             thetha = np.arctan2((-self.match.ball.y + self.fsize[1]/2),(self.fsize[0] + 0.1 -self.match.ball.x))
         else:
-            self.robot.strategy.controller.v_max = 10
-            self.robot.strategy.controller.KP = 100
+            self.robot.strategy.controller.v_max = 3
+            self.robot.strategy.controller.KP = 200
             self.robot.strategy.controller.KD = 0
             return [self.fsize[0],self.fsize[1]/2]
         #if (self.robot.y > 1 or self.robot.y < 0.3) and (self.match.ball.y > 1 or self.match.ball.y < 0.3):
@@ -191,7 +191,7 @@ class WaitBot(PlayerPlay):
         self.wait.add_field(
             fields.PointField(
                 self.match,
-                target = lambda m: (0.4,0.5),
+                target = lambda m: (0.6,0.5),
                 radius = 0.001,
                 multiplier = 4,
                 decay = lambda x : 1
@@ -227,7 +227,7 @@ class AjustAngle(PlayerPlay):
         pass
     def update(self):
         res = [self.match.ball.x, self.match.ball.y]
-        dif = self.robot.theta - np.arctan((self.robot.y-self.fsize[1]/2)/(self.robot.x-self.fsize[0]))
+        dif = self.robot.theta - np.arctan((self.robot.y-self.fsize[1]/2 - 0.3)/(self.robot.x-self.fsize[0]))
         if self.robot.team_color == "yellow":
             dif -= np.pi
         self.robot.strategy.spin = dif*20
@@ -254,7 +254,7 @@ class MainMidFielder(Strategy):
         pred.start()
         ajusta = AjustAngle(self.match,self.robot,pred)
         ajusta.start()
-        op = OnPoint(self.match,self.robot,[lambda m: 0.4,lambda m: 0.5],0.05)
+        op = OnPoint(self.match,self.robot,[lambda m: 0.6,lambda m: 0.5],0.05)
 
         self.playerbook.add_play(wait)
         self.playerbook.add_play(pred)

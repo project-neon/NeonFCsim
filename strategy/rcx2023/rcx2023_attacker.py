@@ -178,14 +178,6 @@ class PredictBotPID(PlayerPlay):
     def start(self):
         pass
     def update(self):
-        dx = self.robot.x - self.match.ball.x
-        dy = self.robot.y - self.match.ball.y
-        delta = 0.08
-        if np.sqrt(dx**2 + dy**2) < delta:
-            if self.robot.team_color == "blue":
-                self.robot.strategy.push = 20000
-            else:
-                self.robot.strategy.push = -20000
 
         def ajust_pred(pos):
             new_pred = pos
@@ -212,8 +204,8 @@ class PredictBotPID(PlayerPlay):
             res[1] = self.match.ball.y + self.match.ball.vy*d/max(v,0.1)*k
             thetha = np.arctan2((-self.match.ball.y + self.fsize[1]/2),(self.fsize[0] + 0.1 -self.match.ball.x))
         else:
-            self.robot.strategy.controller.v_max = 10
-            self.robot.strategy.controller.KP = 100
+            self.robot.strategy.controller.v_max = 3
+            self.robot.strategy.controller.KP = 200
             self.robot.strategy.controller.KD = 0
             return [self.fsize[0],self.fsize[1]/2]
         #if (self.robot.y > 1 or self.robot.y < 0.3) and (self.match.ball.y > 1 or self.match.ball.y < 0.3):
@@ -250,13 +242,10 @@ class RecoverBall(PlayerPlay):
         d = ((self.robot.x-self.match.ball.x)**2+(self.robot.y-self.match.ball.y)**2)**(1/2)
         v = (self.robot.vx**2 + self.robot.vy**2)**(1/2)
         k = 1.2
-        is_yellow = 1
-        if self.robot.team_color == "yellow":
-            is_yellow = -1
         self.recover.add_field(
             fields.PointField(
                 self.match,
-                target = lambda m: (max(0,m.ball.x - 0.2*np.cos(np.arctan2((-m.ball.y + self.fsize[1]/2),(self.fsize[0] -m.ball.x))) + m.ball.vx*d/max(v,0.1)*k), m.ball.y - is_yellow*0.2*np.sin(np.arctan2((-m.ball.y + self.fsize[1]/2),(self.fsize[0] -m.ball.x))) + m.ball.vy*d/max(v,0.1)),
+                target = lambda m: (max(0,m.ball.x - 0.2*np.cos(np.arctan2((-m.ball.y + self.fsize[1]/2),(self.fsize[0] -m.ball.x))) + m.ball.vx*d/max(v,0.1)*k), m.ball.y - 0.2*np.sin(np.arctan2((-m.ball.y + self.fsize[1]/2),(self.fsize[0] -m.ball.x))) + m.ball.vy*d/max(v,0.1)),
                 radius = 0.1,
                 multiplier = 4,
                 decay = lambda x : 1
@@ -360,9 +349,6 @@ class MainAttacker(Strategy):
         self.attack = AttackPossible(self.match,self.robot)
         posx = lambda m: max(0,m.ball.x - 0.2*np.cos(np.arctan2((-m.ball.y + self.fsize[1]/2),(self.fsize[0] -m.ball.x))))
         posy = lambda m: m.ball.y - 0.2*np.sin(np.arctan2((-m.ball.y + self.fsize[1]/2),(self.fsize[0] -m.ball.x)))
-        if self.robot.team_color == "yellow":
-            posx = lambda m: max(0,m.ball.x - 0.2*np.cos(np.arctan2((-m.ball.y + self.fsize[1]/2),(self.fsize[0] -m.ball.x))))
-            posy = lambda m: m.ball.y + 0.2*np.sin(np.arctan2((-m.ball.y + self.fsize[1]/2),(self.fsize[0] -m.ball.x)))
         self.op = OnPoint(self.match,self.robot,[posx,posy],0.02)
         self.wall = StaticInWall(self.match,self.robot)
 
@@ -376,8 +362,10 @@ class MainAttacker(Strategy):
 
         push = Push(self.match, self.robot, recb)
         push.start()
-        
-        ajusta = AjustAngle(self.match, self.robot, push, pred)
+        if self.robot.team_color == "blue":
+            ajusta = AjustAngle(self.match, self.robot, push, pred)
+        else:
+            ajusta = AjustAngle(self.match, self.robot, pred, pred)
         ajusta.start()
 
         self.playerbook.add_play(pred)

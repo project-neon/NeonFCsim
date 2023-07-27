@@ -171,7 +171,49 @@ class PredictBotPID(PlayerPlay):
             phi = phi - np.radians(360)
 
         return phi    
+class BreakerBot(PlayerPlay):
+    def __init__(self, match, robot):
+        super().__init__(match, robot)
+        self.x = 1
+        self.y = 1
+        self.f = lambda m: [self.x,self.y]
+        self.robot = robot
+    def get_name(self):
+        return f"<{self.robot.get_name()} BreakerBot>"
+    def start_up(self):
+        super().start_up()
+        controller = TwoSidesLQR
+        self.robot.strategy.controller = controller(self.robot)
+    def start(self):
+        self.wait = fields.PotentialField(
+        self.match,
+        name="WaitBehaviour"
+        )
 
+        self.wait.add_field(
+            fields.PointField(
+                self.match,
+                target = self.f,
+                radius = 0.001,
+                multiplier = 4,
+                decay = lambda x : 1
+            )
+        )
+        
+    def update(self):
+        for r in self.match.opposites:
+            if r.x > 1.7 and r.x < 2:
+                self.x = r.x
+                self.y = r.y
+            else:
+                r.x = 1.8
+                r.y = 0.75
+        #v = 1
+        #print(self.recover.compute([self.robot.x, self.robot.y]))
+        #vx = self.recover.compute([self.robot.x, self.robot.y])[0]/(self.recover.compute([self.robot.x, self.robot.y])[0]**2 + self.recover.compute([self.robot.x, self.robot.y])[1]**2)**(1/2)
+        #vy = self.recover.compute([self.robot.x, self.robot.y])[1]/(self.recover.compute([self.robot.x, self.robot.y])[0]**2 + self.recover.compute([self.robot.x, self.robot.y])[1]**2)**(1/2)
+        #return [vx*v, vy*v]
+        return self.wait.compute([self.robot.x,self.robot.y])
 class WaitBot(PlayerPlay):
     def __init__(self, match, robot):
         super().__init__(match, robot)
@@ -246,7 +288,7 @@ class MainMidFielder(Strategy):
     def start(self, robot=None):
         super().start(robot=robot)
         self.playerbook = PlayerPlaybook(self.match.coach, self.robot)
-        wait = WaitBot(self.match,self.robot)
+        wait = BreakerBot(self.match,self.robot)
         wait.start()
         pred = PredictBot(self.match,self.robot,wait)
         if robot.team_color == "yellow":

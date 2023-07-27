@@ -12,7 +12,7 @@
         "FREE_BALL": {
             "QUADRANT_1": [
                 {"robot_id": 0, "x": -1.06, "y": 0.00, "orientation": 90},  
-                {"robot_id": 1, "x": -0.10, "y": 0.30, "orientation": 0},
+                {"robot_id": 1, "x": -0.20, "y": 0.30, "orientation": 0},
                 {"robot_id": 2, "x": 0.30, "y": 0.60, "orientation": 0},
                 {"robot_id": 3, "x": -0.69, "y": 0.30, "orientation": -90},
                 {"robot_id": 4, "x": -0.63, "y": -0.30, "orientation": 90}
@@ -33,7 +33,7 @@
             ],
             "QUADRANT_4": [
                 {"robot_id": 0, "x": -1.06, "y": 0, "orientation": 90},  
-                {"robot_id": 1, "x": -0.10, "y": -0.30, "orientation": 0},
+                {"robot_id": 1, "x": -0.20, "y": -0.30, "orientation": 0},
                 {"robot_id": 2, "x": 0.30, "y": -0.60, "orientation": 0},
                 {"robot_id": 3, "x": -0.83, "y": -0.40, "orientation": 90},
                 {"robot_id": 4, "x": -0.76, "y": -0.30, "orientation": 90}
@@ -58,7 +58,7 @@
         "PENALTY_KICK": {
             "BLUE": [
                 {"robot_id": 0, "x": -1.06, "y": 0, "orientation": 90},
-                {"robot_id": 1, "x": -0.1, "y": 0.35, "orientation": 0},
+                {"robot_id": 1, "x": -0.2, "y": 0.40, "orientation": 0},
                 {"robot_id": 2, "x": 0.64, "y": 0, "orientation": 0},
                 {"robot_id": 3, "x": -0.4, "y": -0.5, "orientation": 0},
                 {"robot_id": 4, "x": -0.4, "y": 0.5, "orientation": 0}

@@ -67,8 +67,8 @@
                 {"robot_id": 0, "x": -1.06, "y": 0, "orientation": 0},
                 {"robot_id": 1, "x": 0.05, "y": 0.4, "orientation": 0},
                 {"robot_id": 2, "x": 0.05, "y": -0.2, "orientation": 0},
-                {"robot_id": 3, "x": 0.2, "y": 0.85, "orientation": 0},
-                {"robot_id": 4, "x": 0.05, "y": -0.7, "orientation": 0}
+                {"robot_id": 3, "x": 0.15, "y": 0.85, "orientation": 0},
+                {"robot_id": 4, "x": 0.15, "y": -0.75, "orientation": 0}
             ]
         }
     },

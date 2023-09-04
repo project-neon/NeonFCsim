@@ -53,14 +53,15 @@ class PredictKeeper(PlayerPlay):
         pass
     def update(self):
         res = [0,0]
+        x = 0.07
         d = ((self.robot.x-self.match.ball.x)**2+(self.robot.y-self.match.ball.y)**2)**(1/4)
         v = (self.robot.vx**2 + self.robot.vy**2)**(1/2)
         k = 0.8
         if self.match.game.field.get_dimensions()[1] == 1.3:
-            res[0] = 0.1
+            res[0] = x
             res[1] = min(max(self.match.ball.y - v*d*(-self.match.ball.x)*self.match.ball.vy/max(self.match.ball.vx,0.1),0.3),1)
         else:
-            res[0] = 0.1
+            res[0] = x
             res[1] = min(max(self.match.ball.y - v*d*(-self.match.ball.x)*self.match.ball.vy/max(self.match.ball.vx,0.1),0.65),1.15)
         if abs(self.match.ball.vy) < 0.03 and abs(self.robot.y - res[1]) < 0.07:
             self.robot.strategy.controller.max_angular = 0
@@ -68,7 +69,7 @@ class PredictKeeper(PlayerPlay):
         else:
             self.robot.strategy.controller.max_angular = 3000
             self.robot.strategy.controller.v_max = 1 + abs(self.robot.y - res[1])
-        if self.match.ball.x < 0.05:
+        if self.match.ball.x < x - 0.05:
             res = [self.match.ball.x,self.match.ball.y]
             self.robot.strategy.controller.v_max = 4
             self.robot.strategy.controller.max_angular = 0

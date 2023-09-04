@@ -1,0 +1,1 @@
+from strategy.tests.test_attacker import MainAttacker

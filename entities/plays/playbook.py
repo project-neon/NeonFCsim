@@ -139,8 +139,28 @@ class OnBall(Trigger):
         self.distance = distance
     def evaluate(self,coach,actual_play):
         d = ((self.robot.x-self.match.ball.x)**2 + (self.robot.y-self.match.ball.y)**2)**(1/2)
-        if self.robot.x < self.match.ball.x and d < self.distance:
+        if self.robot.x + 0.05 < self.match.ball.x and d < self.distance:
             return True
+        return False
+class OnBallandWait(Trigger):
+    def __init__(self,match,robot,distance,timeout):
+        super().__init__()
+        self.timeout = timeout
+        self.robot = robot
+        self.match = match
+        self.distance = distance
+        self.time = 9999
+        self.waiting = False
+    def evaluate(self,coach,actual_play):
+        d = ((self.robot.x-self.match.ball.x)**2 + (self.robot.y-self.match.ball.y)**2)**(1/2)
+        if self.robot.x + 0.05 < self.match.ball.x and d < self.distance and not self.waiting:
+            self.waiting = True
+            self.time = actual_play.get_running_time()
+        elif self.waiting and (self.timeout - actual_play.get_running_time() + self.time) <= 0:
+            self.waiting = False
+            self.time = 9999
+            return True
+        print(self.timeout - actual_play.get_running_time() + self.time,self.waiting)
         return False
 class OnPoint(Trigger):
     def __init__(self,match,robot,point,distance):

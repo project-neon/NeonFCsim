@@ -142,6 +142,18 @@ class OnBall(Trigger):
         if self.robot.x + 0.05 < self.match.ball.x and d < self.distance:
             return True
         return False
+class LeftWall(Trigger):
+    def __init__(self,match,robot,distance,balldist):
+        super().__init__()
+        self.distance = distance
+        self.balldist = balldist
+        self.robot = robot
+        self.match = match
+    def evaluate(self,coach,actual_play):
+        d = ((self.robot.x-self.match.ball.x)**2+(self.robot.y-self.match.ball.y)**2)**(1/2)
+        if self.robot.x < self.distance and self.match.ball.x < self.distance and d < self.balldist:
+            return True
+        return False
 class OnBallandWait(Trigger):
     def __init__(self,match,robot,distance,timeout):
         super().__init__()

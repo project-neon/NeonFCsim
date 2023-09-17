@@ -3,7 +3,7 @@ from controller import PID_control, PID_control_2, TwoSidesLQR, PID_control_3
 from entities import plays
 from algorithms.potential_fields import fields
 from strategy.utils.player_playbook import PlayerPlay, PlayerPlaybook, OnInsideBox
-from entities.plays.playbook import MissBall, OnBall, AttackPossible, OnPoint, StaticInWall, WaitFor, OnBallandWait, LeftWall
+from entities.plays.playbook import MissBall, OnBall, AttackPossible, OnPoint,OnInsideCircle, StaticInWall, WaitFor, OnBallandWait, LeftWall
 import numpy as np
 class Push(PlayerPlay):
     def __init__(self, match, robot):
@@ -61,6 +61,29 @@ class SpinPlay(PlayerPlay):
         else:
             self.robot.strategy.spin = -1000
         return [0,0]
+class Retreat(PlayerPlay):
+    def __init__(self, match, robot):
+        super().__init__(match, robot)
+        self.fsize = self.match.game.field.get_dimensions()
+        self.robot = robot
+    def get_name(self):
+        return f"<{self.robot.get_name()} Retreat>"
+    def start_up(self):
+            super().start_up()
+            controller = PID_control_3
+            controller_kwargs = {
+                'max_speed': 1.5, 'max_angular': 3000,'two_sides':True, 'kd': 0,  
+                'kp': 75,'kb':0, 'krho': 10,'reduce_speed': False
+            }
+
+            self.robot.strategy.controller = controller(self.robot, **controller_kwargs)
+    def start(self):
+        pass
+    def update(self):
+        u = self.robot.x - 0
+        v = self.robot.y - self.fsize[1]/2
+        mod = np.sqrt(u**2+v**2)
+        return [self.robot.x + u/mod,self.robot.y + v/mod]
 class AjustAngle(PlayerPlay):
     def __init__(self, match, robot, nextplay, nextplay2):
         super().__init__(match, robot)
@@ -142,7 +165,7 @@ class PredictBot(PlayerPlay):
         k = 0.5
         res[0] = self.match.ball.x + self.match.ball.vx*d/max(v,0.1)*k
         res[1] = self.match.ball.y + self.match.ball.vy*d/max(v,0.1)*k
-        ytarget = max(self.fsize[1]/2-0.3,min(self.fsize[1]/2 + 0.3,self.robot.y))
+        ytarget = max(self.fsize[1]/2-0.2,min(self.fsize[1]/2 + 0.2,self.robot.y))
         self.thetha = np.arctan2((-self.match.ball.y + ytarget),(self.fsize[0]-self.match.ball.x))
         if not abs(self.match.ball.y - self.fsize[1]/2) < 0.7:
             print("test")
@@ -168,6 +191,9 @@ class MainAttacker(Strategy):
         self.wall = StaticInWall(self.match,self.robot)
         self.onb = OnBallandWait(self.match,self.robot,0.15,0.7)
         self.leftwall = LeftWall(self.match,self.robot,0.15,0.1)
+        onarea = OnInsideCircle(self.robot,[0,self.fsize[1]/2],0.6)
+
+
         pred = PredictBot(self.match, self.robot)
         pred.start()
 
@@ -177,18 +203,22 @@ class MainAttacker(Strategy):
         ph = Push(self.match, self.robot)
         ph.start()
 
+        retreat = Retreat(self.match, self.robot)
+
         #ajusta = AjustAngle(self.match, self.robot, push, pred)
         #ajusta.start()
 
         self.playerbook.add_play(pred)
         self.playerbook.add_play(ph)
         self.playerbook.add_play(sp)
-        #self.playerbook.add_play(ajusta)
+        self.playerbook.add_play(retreat)
 
         pred.add_transition(self.onb,ph)
         pred.add_transition(self.leftwall,sp)
         sp.add_transition(self.wait2,pred)
         ph.add_transition(self.wait,pred)
+        pred.add_transition(onarea,retreat)
+        retreat.add_transition(self.wait,pred)
         #push.add_transition(self.attack,pred)
         self.playerbook.set_play(sp)
     def decide(self):

@@ -236,7 +236,15 @@ class IsAttackerSpin(Trigger):
                     is_spinning = True
                     break
         return is_spinning
-
+class OnInsideCircle(Trigger):
+    def __init__(self,robot,point,radius):
+        self.robot = robot
+        self.r = radius
+        self.point = point
+    def evaluate(self, coach, actual_play):
+        if ((self.robot.x - self.point[0])**2 + (self.robot.y - self.point[1])**2)**(1/2) < self.r:
+            return True
+        return False
 
 class StuckRobots(Trigger):
     def __init__(self, stuck_strategies=[]):

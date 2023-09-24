@@ -127,8 +127,8 @@ class PredictBot(PlayerPlay):
             super().start_up()
             controller = PID_control_3
             controller_kwargs = {
-                'max_speed': 2.3, 'max_angular': 3000,'two_sides':True, 'kd': 0,  
-                'kp': 80,'kb':-30, 'krho': 13,'reduce_speed': False
+                'max_speed': 2.3, 'max_angular': 4000,'two_sides':True, 'kd': 0,  
+                'kp': 80,'kb':-30, 'krho': 13,'reduce_speed': True,'spread':0.5
             }
 
             self.robot.strategy.controller = controller(self.robot, **controller_kwargs)
@@ -188,6 +188,7 @@ class MainAttacker(Strategy):
         self.attack = AttackPossible(self.match,self.robot)
         self.wait = WaitFor(3)
         self.wait2 = WaitFor(0.3)
+        self.retreat_time = WaitFor(1)
         self.wall = StaticInWall(self.match,self.robot)
         self.onb = OnBallandWait(self.match,self.robot,0.15,0.7)
         self.leftwall = LeftWall(self.match,self.robot,0.15,0.1)
@@ -218,7 +219,7 @@ class MainAttacker(Strategy):
         sp.add_transition(self.wait2,pred)
         ph.add_transition(self.wait,pred)
         pred.add_transition(onarea,retreat)
-        retreat.add_transition(self.wait,pred)
+        retreat.add_transition(self.retreat_time,pred)
         #push.add_transition(self.attack,pred)
         self.playerbook.set_play(sp)
     def decide(self):

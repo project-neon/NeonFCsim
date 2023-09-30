@@ -62,7 +62,6 @@ class Game():
         )
         self.match.update(frame)
         commands = self.match.decide()
-
         if self.use_api and self.match.game_status == 'stop':
             commands = [
                 {

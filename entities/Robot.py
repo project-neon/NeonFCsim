@@ -1,9 +1,11 @@
 import math
 import logging
+import threading
 import numpy as np
 from collections import deque
 from commons.math import angular_speed, rotate_via_numpy
 from commons.math import speed as avg_speed
+
 
 class Robot(object):
 
@@ -44,6 +46,7 @@ class Robot(object):
 
         self.vx, self.vy, self.vtheta = 0, 0, 0
         self.x, self.y, self.theta = 0, 0, 0
+
 
     def start(self):
         self.strategy.start(self)

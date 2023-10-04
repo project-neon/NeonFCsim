@@ -10,7 +10,7 @@ def angle_adjustment(angle):
         return phi
 
 class PID_control_3(object):
-    def __init__(self, robot, default_fps=60, max_speed=1.8, max_angular=2400, krho=100,kb=0, kp=60, ki=0, kd=0, reduce_speed=False, two_sides=False):
+    def __init__(self, robot, default_fps=60, max_speed=1.8, max_angular=2400, krho=100,kb=0, kp=60, ki=0, kd=0, reduce_speed=False, two_sides=False, spread=0):
         self.vision = robot.game.vision
         self.field_w, self.field_h = robot.game.field.get_dimensions()
         self.robot = robot
@@ -43,6 +43,10 @@ class PID_control_3(object):
         # Max speeds for the robot
         self.v_max = max_speed # linear speed 
         self.w_max = math.radians(max_angular) # angular speed rad/s
+
+        # Param to control the inverse motion of the robot
+        self.spread = spread
+        self.front = True
 
         self.desired_angle = 0 # the desired angle between robot and x axis
     def set_desired(self, vector):
@@ -88,7 +92,12 @@ class PID_control_3(object):
             v = self.v_max
         
         # """Objective behind the robot"""
-        if self.two_sides and (abs(alpha) > math.pi/2):
+        if self.two_sides and (abs(alpha) > np.pi/2 + self.spread):
+            self.front = True
+        elif self.two_sides and (abs(alpha) < np.pi/2 - self.spread):
+            self.front = False
+
+        if self.front:
             v = -v
             alpha = angle_adjustment(alpha - math.pi)
             beta = angle_adjustment(self.desired_angle - self.robot.theta + np.pi)

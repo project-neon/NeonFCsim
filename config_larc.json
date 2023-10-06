@@ -20,7 +20,7 @@
         "category": "5v5",
         "coach_parameters": {
             "penalty_taker": "short_shot",
-            "penalty_defender": "Go_Foward"
+            "penalty_defender": "GoalkeeperPenaltyInside"
             
         }
     },

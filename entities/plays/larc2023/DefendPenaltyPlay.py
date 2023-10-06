@@ -2,8 +2,8 @@ import strategy
 import os
 
 from entities.plays.larc2023 import MainPlay
-from strategy.larc2023.shortShooter import shortShooter
-from strategy.larc2023.longShooter import longShooter
+from strategy.larc2023.PenaltyFoward import GoalkeeperPenaltyFoward
+from strategy.larc2023.PenaltyInside import GoalkeeperPenaltyInside
 
 class DefendPenaltyPlay(MainPlay):
     def __init__(self, coach, penalty_defender):
@@ -14,10 +14,10 @@ class DefendPenaltyPlay(MainPlay):
         self.penalty_defender = os.environ.get('PENALTY_DEFENDER', penalty_defender) 
         self.PENALTY_DEFENDER_ID = 4
 
-        if self.penalty_defender == 'Go_Foward':
-            self.defender = longShooter(self.match, robot_id=self.PENALTY_DEFENDER_ID)
-        elif self.penalty_defender == 'Stay_Inside':
-            self.defender = shortShooter(self.match, robot_id=self.PENALTY_DEFENDER_ID)
+        if self.penalty_defender == 'GoalkeeperPenaltyFoward':
+            self.defender = GoalkeeperPenaltyFoward(self.match, robot_id=self.PENALTY_DEFENDER_ID)
+        elif self.penalty_defender == 'GoalkeeperPenaltyInside':
+            self.defender = GoalkeeperPenaltyInside(self.match, robot_id=self.PENALTY_DEFENDER_ID)
 
         self.strategies = [
             strategy.Idle(),

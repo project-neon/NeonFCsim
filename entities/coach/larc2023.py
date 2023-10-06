@@ -1,5 +1,6 @@
 from entities.coach.coach import BaseCoach
 from entities import plays
+from entities.plays.playbook import OnPenaltyTi
 import json
 
 class Coach(BaseCoach):
@@ -13,11 +14,14 @@ class Coach(BaseCoach):
         main_play = plays.larc2023.MainPlay(self)
         penalty_play = plays.larc2023.PenaltyPlay(self)
 
-        penalty_trigger = plays.OnPenaltyKick(self.match.game.referee, self.match.team_color)
+        penalty_our_trigger = plays.Playbook.OnPenaltyKick(self.match.game.referee, self.match.team_color)
+        penalty_nour_trigger = plays.Playbook.OnPenaltyRecieve(self.match.game.referee, self.match.team_color)
 
         penalty_seconds_trigger = plays.WaitForTrigger(10)
 
-        main_play.add_transition(penalty_trigger, penalty_play)
+        main_play.add_transition(penalty_our_trigger, penalty_play)
+        main_play.add_transition(penalty_nour_trigger, penalty_play)
+
         penalty_play.add_transition(penalty_seconds_trigger, main_play)
 
         self.playbook.add_play(main_play)

@@ -306,6 +306,17 @@ class OnPenaltyKick(Trigger):
         # print(foul, self.referee.get_color())
         return foul == "PENALTY_KICK" and self.team_color.upper() == self.referee.get_color()
 
+class OnPenaltyRecieve(Trigger):
+    def __init__(self, referee, team_color):
+        super().__init__()
+        self.referee = referee
+        self.team_color = team_color
+
+    def evaluate(self, coach, actual_play):
+        foul = self.referee.get_foul()
+        # print(foul, self.referee.get_color())
+        return foul == "PENALTY_KICK" and self.team_color.upper() != self.referee.get_color()
+
 class OnFreeBall(Trigger):
     def __init__(self, referee, team_color):
         super().__init__()

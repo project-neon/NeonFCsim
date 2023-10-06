@@ -19,7 +19,9 @@
         "coach_name": "LARC_2022_5V5",
         "category": "5v5",
         "coach_parameters": {
-            "penalty_taker": "short_shot"
+            "penalty_taker": "short_shot",
+            "penalty_defender": "Go_Foward"
+            
         }
     },
     "referee": true,

@@ -19,7 +19,8 @@
         "coach_name": "RCX2023",
         "category": "3v3",
         "coach_parameters": {
-            "penalty_taker": "short_shot"
+            "penalty_taker": "short_shot",
+            "penalty_defender": "Go_Foward"
         }
     },
     "referee": true,

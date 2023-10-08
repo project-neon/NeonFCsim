@@ -48,6 +48,7 @@ class OnDefensiveTransitionTrigger(Trigger):
             return self.match.ball.x > self.defensive_distance
 
 class OnInsideBox(Trigger):
+    # Evaluates if ball is inside/outside given box
     def __init__(self, match, box, outside=False):
         super().__init__()
         self.ball = match.ball
@@ -58,6 +59,42 @@ class OnInsideBox(Trigger):
         if self.outside:
             return not point_in_rect([self.ball.x, self.ball.y], self.box)
         return point_in_rect([self.ball.x, self.ball.y], self.box)
+
+class OnField(Trigger):
+    # Evaluates if ball is in our side of the field
+    def __init__(self, match, n_robots, field_dim, team_side="left", outside=False):
+        super().__init__()
+        self.ball = match.ball
+        self.n = n_robots
+        self.fsize = field_dim
+        self.side = team_side
+        self.outside = outside
+
+    def evaluate(self, *args, **kwargs):
+        our_field = [0, 0, self.fsize[0] / 2, self.fsize[1]]
+        if self.n == 5:
+            goal_area = [0, 45, 40, 90]
+        else:
+            goal_area = [0, 30, 15, 70]
+        
+        if point_in_rect([self.ball.x, self.ball.y], our_field) and not point_in_rect([self.ball.x, self.ball.y], goal_area):
+            return True
+        else:
+            return False
+
+class OnRobotInsideBox(Trigger):
+    # Evaluates if given robot is inside/outside given box
+    def __init__(self, match, box, robot, outside=False):
+        super().__init__()
+        self.ball = match.ball
+        self.box = box
+        self.robot = robot
+        self.outside = outside
+
+    def evaluate(self, *args, **kwargs):
+        if self.outside:
+            return not point_in_rect([self.robot.x, self.robot.y], self.box)
+        return point_in_rect([self.robot.x, self.robot.y], self.box)
 
 class OnCorners(Trigger):
     def __init__(self, match, corners, outside=False):

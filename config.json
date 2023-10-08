@@ -16,7 +16,7 @@
     "match" : {
         "team_side": "left",
         "team_color": "blue",
-        "coach_name": "RCX2023",
+        "coach_name": "TEST",
         "category": "5v5",
         "coach_parameters": {
             "penalty_taker": "short_shot"

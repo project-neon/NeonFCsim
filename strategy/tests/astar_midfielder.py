@@ -119,10 +119,11 @@ class AstarToBall(PlayerPlay):
     
     def start_up(self):
             super().start_up()
-            controller = PID_control
+            controller = PID_control_3
             controller_kwargs = {
-                'max_speed': 2.5, 'max_angular': 4000, 'kd': 0,  
-                'kp': 120, 'krho': 8,'reduce_speed': False
+                'max_speed': 2, 'max_angular': 4000, 'kd': 0,
+                'kp': 120, 'krho': 8,'reduce_speed': False,
+                'two_sides': True,"spread":0.5
             }
 
             self.robot.strategy.controller = controller(self.robot, **controller_kwargs)

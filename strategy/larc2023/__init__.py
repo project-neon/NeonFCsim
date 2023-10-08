@@ -1,0 +1,1 @@
+from strategy.larc2023.larc2023_attacker import MainAttacker

@@ -49,7 +49,13 @@ class GoalkeeperPenaltyFoward(Strategy):
         foward.start()
 
         self.playerbook.add_play(foward)
-
+    def get_position(self):
+    	pos = {}
+    	if self.match.team_color == "blue":
+    		pos = {"robot_id": self.robot_id, "x": -1.06, "y": 0, "orientation": 0}
+    	else:
+    		pos = {"robot_id": self.robot_id, "x": 1.06, "y": 0, "orientation": 0}
+    	return pos 
     def decide(self):
         self.spin = 0
         res = self.playerbook.update()

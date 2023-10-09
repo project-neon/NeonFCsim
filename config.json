@@ -19,7 +19,8 @@
         "coach_name": "RCX2023",
         "category": "5v5",
         "coach_parameters": {
-            "penalty_taker": "short_shot"
+            "penalty_taker": "short_shot",
+            "penalty_defender": "GoalkeeperPenaltyInside"
         }
     },
     "referee": true,

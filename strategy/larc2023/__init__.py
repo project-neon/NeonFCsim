@@ -1,1 +1,6 @@
+
 from strategy.larc2023.larc2023_attacker import MainAttacker
+from strategy.larc2023.longShooter import longShooter
+from strategy.larc2023.shortShooter import shortShooter
+from strategy.larc2023.PenaltyInside import GoalkeeperPenaltyInside
+from strategy.larc2023.PenaltyFoward import GoalkeeperPenaltyFoward

@@ -23,7 +23,7 @@
             "penalty_defender": "GoalkeeperPenaltyInside"
         }
     },
-    "referee": false,
+    "referee": true,
     "data_sender": false,
     "api": false
 }

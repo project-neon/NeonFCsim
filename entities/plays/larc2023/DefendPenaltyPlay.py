@@ -15,15 +15,15 @@ class DefendPenaltyPlay(MainPlay):
         self.PENALTY_DEFENDER_ID = 4
 
         if self.penalty_defender == 'GoalkeeperPenaltyFoward':
-            self.defender = GoalkeeperPenaltyFoward(self.match, robot_id=self.PENALTY_DEFENDER_ID)
+            self.defender = GoalkeeperPenaltyFoward(self.match)
         elif self.penalty_defender == 'GoalkeeperPenaltyInside':
-            self.defender = GoalkeeperPenaltyInside(self.match, robot_id=self.PENALTY_DEFENDER_ID)
+            self.defender = GoalkeeperPenaltyInside(self.match)
 
         self.strategies = [
-            strategy.Idle(),
-            strategy.Idle(),
-            strategy.Idle(),
-            strategy.Idle(),
+            strategy.tests.Idle(self.match),
+            strategy.tests.Idle(self.match),
+            strategy.tests.Idle(self.match),
+            strategy.tests.Idle(self.match),
             self.defender,
         ]
 

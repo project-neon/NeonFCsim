@@ -6,14 +6,14 @@ class MainPlay(Play):
     def __init__(self, coach):
         super().__init__(coach)
         self.coach = coach
-        self.coach = self.coach.match
+        self.match = self.coach.match
 
         self.constraints = [
-            (strategy.tests.Idle(), self._elect_goalkeeper),
-            (strategy.tests.Idle(), self._elect_leftattacker),
+            (strategy.tests.Idle(self.match), self._elect_goalkeeper),
+            (strategy.tests.Idle(self.match), self._elect_leftattacker),
             (strategy.larc2023.MainAttacker(self.match), self._elect_rightattacker),
-            (strategy.tests.Idle(), self._elect_rightwing),
-            (strategy.tests.Idle(), self._elect_leftwing)
+            (strategy.tests.Idle(self.match), self._elect_rightwing),
+            (strategy.tests.Idle(self.match), self._elect_leftwing)
         ]
 
     def _can_play(self):

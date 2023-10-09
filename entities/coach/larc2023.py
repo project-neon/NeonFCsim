@@ -15,11 +15,11 @@ class Coach(BaseCoach):
         self.playbook = plays.Playbook(self)
 
         main_play = plays.rcx2023.MainPlay(self)
-        penalty_play = plays.larc2023.PenaltyPlay(self)
-        defendpenalty_play = plays.larc2023.DefendPenaltyPlay(self)
+        penalty_play = plays.larc2023.PenaltyPlay(self,self.penalty["match"]["coach_parameters"]["penalty_taker"])
+        defendpenalty_play = plays.larc2023.DefendPenaltyPlay(self,self.penalty["match"]["coach_parameters"]["penalty_defender"])
 
-        penalty_our_trigger = plays.Playbook.OnPenaltyKick(self.match.game.referee, self.match.team_color)
-        penalty_nour_trigger = plays.Playbook.OnPenaltyRecieve(self.match.game.referee, self.match.team_color)
+        penalty_our_trigger = plays.playbook.OnPenaltyKick(self.match.game.referee, self.match.team_color)
+        penalty_nour_trigger = plays.playbook.OnPenaltyRecieve(self.match.game.referee, self.match.team_color)
 
         penalty_seconds_trigger = plays.WaitForTrigger(10)
 

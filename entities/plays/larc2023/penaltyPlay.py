@@ -20,10 +20,10 @@ class PenaltyPlay(MainPlay):
             self.shooter = shortShooter(self.match, robot_id=self.PENALTY_TAKER_ID)
 
         self.strategies = [
-            strategy.Idle(),
-            strategy.Idle(),
-            strategy.Idle(),
-            strategy.Idle(),
+            strategy.tests.Idle(self.match),
+            strategy.tests.Idle(self.match),
+            strategy.tests.Idle(self.match),
+            strategy.tests.Idle(self.match),
             self.shooter,
         ]
 

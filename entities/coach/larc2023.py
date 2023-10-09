@@ -31,6 +31,7 @@ class Coach(BaseCoach):
 
         self.playbook.add_play(main_play)
         self.playbook.add_play(penalty_play)
+        self.playbook.add_play(defendpenalty_play)
 
         self.playbook.set_play(main_play)
 

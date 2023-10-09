@@ -7,6 +7,8 @@ class MainPlay(Play):
         super().__init__(coach)
         self.coach = coach
         self.match = self.coach.match
+        self.field_h = self.match.game.field.get_dimensions()[1]
+        self.field_w = self.match.game.field.get_dimensions()[0]
 
         self.constraints = [
             (strategy.tests.Idle(self.match), self._elect_goalkeeper),

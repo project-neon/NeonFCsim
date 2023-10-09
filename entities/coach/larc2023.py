@@ -1,17 +1,20 @@
 from entities.coach.coach import BaseCoach
 from entities import plays
-from entities.plays.playbook import OnPenaltyTi
+from entities.plays.playbook import OnPenaltyKick, OnPenaltyRecieve
 import json
 
 class Coach(BaseCoach):
     NAME = "LARC_2023_5V5"
-    def __init__(self, match):
+    def __init__(self, match, coach_parameters={}):
         super().__init__(match)
 
         self.positions = json.loads(open('foul_placements5v5.json', 'r').read())
+        
+        self.penalty = json.loads(open('config.json', 'r').read())
+        print(self.penalty["match"]["coach_parameters"]["penalty_taker"])
         self.playbook = plays.Playbook(self)
 
-        main_play = plays.larc2023.MainPlay(self)
+        main_play = plays.rcx2023.MainPlay(self)
         penalty_play = plays.larc2023.PenaltyPlay(self)
         defendpenalty_play = plays.larc2023.DefendPenaltyPlay(self)
 

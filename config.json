@@ -16,14 +16,14 @@
     "match" : {
         "team_side": "left",
         "team_color": "blue",
-        "coach_name": "RCX2023",
+        "coach_name": "LARC_2023_5V5",
         "category": "5v5",
         "coach_parameters": {
             "penalty_taker": "short_shot",
             "penalty_defender": "GoalkeeperPenaltyInside"
         }
     },
-    "referee": true,
+    "referee": false,
     "data_sender": false,
     "api": false
 }

@@ -10,12 +10,13 @@
         "replacer_port": 10004,
         "referee_port": 10003,
         "api_address": "127.0.0.1",
-        "api_port" : 43210
+        "api_port" : 43210,
+        "api_recv_port": 43211
     },
     "match" : {
         "team_side": "right",
         "team_color": "yellow",
-        "coach_name": "RCX2023",
+        "coach_name": "LARC_2023_5V5",
         "category": "5v5",
         "coach_parameters": {
             "penalty_taker": "short_shot",

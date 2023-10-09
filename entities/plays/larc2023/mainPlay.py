@@ -28,8 +28,8 @@ class MainPlay(Play):
         robots = [r.robot_id for r in self.match.robots]
         constraints = self.constraints
 
-        if self._reset == True:
-            self._reset = False
+        #if self._reset == True:
+         #   self._reset = False
 
         for strategy, fit_fuction in constraints:
             elected, best_fit = -1, -99999

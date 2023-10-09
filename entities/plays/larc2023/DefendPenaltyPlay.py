@@ -43,7 +43,8 @@ class DefendPenaltyPlay(MainPlay):
             return replacements
 
         #return None
-	return replacements
+        return replacements
+    
     def _can_play(self):
         return self.match.game.referee.can_play()
 
